@@ -122,7 +122,9 @@ modules:
   # Pass 2: COPR + Terra + 3rd-party repos.
   # ONLY packages that REQUIRE these repos are listed here.
   # Terra is enabled but ONLY zed must be pulled from it.
-  # All other packages come from their designated COPR or vendor repos.
+  # Pass 2: COPR + Terra repos.
+  # ONLY packages that REQUIRE these repos are listed here.
+  # Terra is enabled but ONLY zed must be pulled from it.
   # repos.cleanup: true disables and removes ALL added repos after this pass.
   - type: dnf
     repos:
@@ -132,11 +134,7 @@ modules:
         - sneexy/zen-browser
         - lilay/topgrade
       files:
-        - https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
         - https://github.com/terrapkg/subatomic-repos/raw/main/terra.repo
-      keys:
-        - https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
-        - https://packages.microsoft.com/keys/microsoft.asc
     install:
       skip-unavailable: false
       packages:
@@ -155,15 +153,6 @@ modules:
         # From sneexy/zen-browser COPR
         - zen-browser
 
-        # From Brave Browser vendor repo
-        - brave-browser
-        - brave-origin
-
-        # From Microsoft VSCode repo
-        # (vscode.repo is deployed with enabled=0 via files/system/;
-        # this explicit install pulls code with that repo enabled for build)
-        - code
-
         # From Terra repo — ONLY this package; no other package must come from Terra
         - zed
 
@@ -180,6 +169,8 @@ modules:
   - type: script
     scripts:
       - setup-nix-base.sh
+      - install-vscode.sh
+      - install-brave.sh
       - install-texlive.sh
       - install-zotero.sh
       - install-obsidian.sh
@@ -201,4 +192,3 @@ modules:
     user:
       enabled:
         - home-manager-init.service
-
