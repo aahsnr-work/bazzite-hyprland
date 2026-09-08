@@ -7,6 +7,8 @@
 - [x] **In build.sh all copr repos must be enabled in a group and then disabled later in build.sh as a group.**
   - _Implemented via BlueBuild `recipes/recipe.yml` using the declarative `dnf` module. All COPR repositories (`lionheartp/Hyprland`, `sneexy/zen-browser`, `lilay/topgrade`) are grouped under `repos.copr`, and `repos.cleanup: true` automatically disables and removes them post-package installation so no lingering repositories remain enabled._
 
+- [ ] For dnf installed packages you must include --setopt=install_weak_deps=False
+
 - [x] **Integrate steps to setup vscode, brave, brave-origin and zen browser from their respective repos.**
   - _Brave Browser and Brave Origin: Installed via `type: dnf` using `https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo` and GPG key `https://brave-browser-rpm-release.s3.brave.com/brave-core.asc`._
   - _Zen Browser: Installed via `sneexy/zen-browser` COPR._
@@ -20,6 +22,8 @@
 
 - [x] **Integrate determinate nix and home-manager setup.**
   - _Implemented: The `/nix` directory is created in the image root during build (`files/scripts/setup-nix-base.sh`). On first boot, `determinate-nix-init.service` initializes Determinate Nix using the official OSTree planner (mounting `/var/nix` persistent storage to `/nix` and running `nix-daemon`). Then `home-manager-init.service` applies user configurations on login._
+
+- [ ] Use https://github.com/fu5ha/winter and https://github.com/fu5ha/nix-home-manager as references for managing nix and home-manager in my bluebuild custom images. Fedora immutable distros don't allow the creation of /nix directory
 
 - [x] **Integrate topgrade into my custom image but make sure all considerations and cases are being taken into account. Topgrade will be installed from fedora copr as seen in the build.sh file.**
   - _Implemented: Installed from `lilay/topgrade` COPR. Pre-configured `/etc/topgrade.toml` is deployed to disable raw host package upgrades (`dnf`, `rpm-ostree`, `system`) that fail on read-only OSTree/bootc filesystems, while enabling `home_manager = true`, `flatpak = true`, and `cleanup = true`._
@@ -46,6 +50,7 @@
 
 - [x] **Find a way to integrate chezmoi into my base image so that, during the building of image in the workflow, chezmoi manages my dotfiles from my github repo in https://github.com/aahsnr-configs/dots. The goal is that when I login to Hyprland all the dotfiles should be automatically be in the right place. There must be an automated process to sync dotfiles using chezmoi after chezmoi initially sets up dotfiles.**
   - _Implemented: Configured BlueBuild `chezmoi` module in `recipes/recipe.yml` pointing to `https://github.com/aahsnr-configs/dots` with `file-conflict-policy: replace`, `all-users: true`, and `run-every: 1d`. Automatically provisions `chezmoi-init.service` (runs at login to pull and apply dotfiles) and `chezmoi-update.timer` for daily background sync._
+  - [ ] Cannot the dotfiles be baked into the image itself instead of running at login.
 
 - [x] **Dotfiles setup should be done before determinate-nix and home-manager setup. The dotfiles will point to a home-manager folder in `~/.config/`.**
   - _Implemented: Enforced service ordering via `home-manager-init.service` with `After=chezmoi-init.service`. Chezmoi applies dotfiles to `~/.config/home-manager/` first, and then Home-Manager applies the user package configuration._
