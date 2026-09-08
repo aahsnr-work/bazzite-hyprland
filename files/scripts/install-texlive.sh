@@ -1,9 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "=== Installing TeX Live (scheme-full) to /usr/lib/texlive ==="
+echo "=== Installing TeX Live (scheme-medium) to /usr/lib/texlive ==="
 TEXLIVE_INSTALL_DIR="/usr/lib/texlive"
 mkdir -p "${TEXLIVE_INSTALL_DIR}"
+
+# Additional TeX Live packages to install via tlmgr at build time.
+# Add any individual packages here that you would like baked into the immutable image.
+EXTRA_TL_PACKAGES=(
+  latexmk
+  biber
+)
 
 TEXLIVE_TMP="$(mktemp -d)"
 trap 'rm -rf "${TEXLIVE_TMP}"' EXIT
@@ -18,7 +25,7 @@ TEXMFSYSVAR ${TEXLIVE_INSTALL_DIR}/texmf-var
 TEXMFSYSCONFIG ${TEXLIVE_INSTALL_DIR}/texmf-config
 instopt_adjustpath 0
 tlpdbopt_autobackup 0
-tlpdbopt_install_docfiles 1
+tlpdbopt_install_docfiles 0
 tlpdbopt_install_srcfiles 0
 EOF
   "${TEXLIVE_TMP}"/install-tl-*/install-tl \
@@ -27,6 +34,12 @@ EOF
 
   TEXLIVE_BINDIR="$(find "${TEXLIVE_INSTALL_DIR}" -maxdepth 3 -type d -name 'x86_64-linux' | head -n1)"
   if [ -n "${TEXLIVE_BINDIR}" ]; then
+    # Install additional TeX Live packages via tlmgr during image build
+    if [ ${#EXTRA_TL_PACKAGES[@]} -gt 0 ]; then
+      echo "Installing additional TeX Live packages via tlmgr: ${EXTRA_TL_PACKAGES[*]}..."
+      "${TEXLIVE_BINDIR}/tlmgr" install "${EXTRA_TL_PACKAGES[@]}" || echo "WARNING: tlmgr package installation exited non-zero" >&2
+    fi
+
     install -d /etc/profile.d
     cat >/etc/profile.d/texlive.sh <<EOF
 export PATH="${TEXLIVE_BINDIR}:\$PATH"

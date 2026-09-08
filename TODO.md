@@ -7,7 +7,8 @@
 - [x] **In build.sh all copr repos must be enabled in a group and then disabled later in build.sh as a group.**
   - _Implemented via BlueBuild `recipes/recipe.yml` using the declarative `dnf` module. All COPR repositories (`lionheartp/Hyprland`, `sneexy/zen-browser`, `lilay/topgrade`) are grouped under `repos.copr`, and `repos.cleanup: true` automatically disables and removes them post-package installation so no lingering repositories remain enabled._
 
-- [ ] For dnf installed packages you must include --setopt=install_weak_deps=False
+- [x] **For dnf installed packages you must include --setopt=install_weak_deps=False**
+  - _Implemented: Configured `install-weak-deps: false` across both Pass 1 and Pass 2 in `recipes/recipe.yml`. Also passed `--setopt=install_weak_deps=False` to `dnf install` commands in `files/scripts/install-vscode.sh` and `files/scripts/install-brave.sh`. This prevents unnecessary optional packages from bloating the image._
 
 - [x] **Integrate steps to setup vscode, brave, brave-origin and zen browser from their respective repos.**
   - _Brave Browser and Brave Origin: Installed via `type: dnf` using `https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo` and GPG key `https://brave-browser-rpm-release.s3.brave.com/brave-core.asc`._
@@ -22,8 +23,8 @@
 
 - [x] **Integrate determinate nix and home-manager setup.**
   - _Implemented: The `/nix` directory is created in the image root during build (`files/scripts/setup-nix-base.sh`). On first boot, `determinate-nix-init.service` initializes Determinate Nix using the official OSTree planner (mounting `/var/nix` persistent storage to `/nix` and running `nix-daemon`). Then `home-manager-init.service` applies user configurations on login._
-
-- [ ] Use https://github.com/fu5ha/winter and https://github.com/fu5ha/nix-home-manager as references for managing nix and home-manager in my bluebuild custom images. Fedora immutable distros don't allow the creation of /nix directory
+  - [x] **Is it possible to have the steps that determinate-nix-init.service performs on first boot be done during building the image stage?**
+    - _Resolved & Documented: **No, the full Nix installation cannot be baked into `/nix` at build time.** On Fedora Atomic/OSTree (`composefs`), `/` and `/usr` are mounted read-only. Nix requires `/nix/store` to be writable at runtime to install derivations and manage Home-Manager. Therefore, `/nix` must be a bind mount to persistent storage on `/var/nix`. In OSTree architecture, `/var` is stateful storage that is explicitly excluded from container image commits (so user data is not wiped on updates/rebases). What IS baked into the image is the empty `/nix` mountpoint directory (`files/scripts/setup-nix-base.sh`). On first boot, `determinate-nix-init.service` initializes `/var/nix` using Determinate Systems' official `ostree` planner, mounts it, and starts `nix-daemon`._
 
 - [x] **Integrate topgrade into my custom image but make sure all considerations and cases are being taken into account. Topgrade will be installed from fedora copr as seen in the build.sh file.**
   - _Implemented: Installed from `lilay/topgrade` COPR. Pre-configured `/etc/topgrade.toml` is deployed to disable raw host package upgrades (`dnf`, `rpm-ostree`, `system`) that fail on read-only OSTree/bootc filesystems, while enabling `home_manager = true`, `flatpak = true`, and `cleanup = true`._
@@ -50,7 +51,12 @@
 
 - [x] **Find a way to integrate chezmoi into my base image so that, during the building of image in the workflow, chezmoi manages my dotfiles from my github repo in https://github.com/aahsnr-configs/dots. The goal is that when I login to Hyprland all the dotfiles should be automatically be in the right place. There must be an automated process to sync dotfiles using chezmoi after chezmoi initially sets up dotfiles.**
   - _Implemented: Configured BlueBuild `chezmoi` module in `recipes/recipe.yml` pointing to `https://github.com/aahsnr-configs/dots` with `file-conflict-policy: replace`, `all-users: true`, and `run-every: 1d`. Automatically provisions `chezmoi-init.service` (runs at login to pull and apply dotfiles) and `chezmoi-update.timer` for daily background sync._
-  - [ ] Cannot the dotfiles be baked into the image itself instead of running at login.
+  - [x] **Question: Cannot the dotfiles be baked into the image itself instead of running at login?**
+    - _Resolved & Documented: On OSTree systems, `/home` is a symlink to `/var/home`. During an image rebase (e.g. from Fedora Silverblue to this custom image), `/var` is preserved and **never overwritten by the new image**. During image building in GitHub Actions, your local user account does not exist. While files can be placed in `/etc/skel/`, `/etc/skel` is only copied when a brand-new user account is created via `useradd`; it does not apply to existing users rebasing an existing system. Using `chezmoi-init.service` ensures that whenever the user logs in, their dotfiles are pulled and applied directly into `$HOME`._
+  - [x] **Also add instructions in the README.md file to how configure my dotfiles for chezmoi and selectively choosing what files and folders to use from the dots repo.**
+    - _Implemented: Detailed guide added to `README.md` explaining how to configure `.chezmoiignore` at the root of `aahsnr-configs/dots` to selectively include only desired folders (like `hypr`, `kitty`, `waybar`) while ignoring unneeded files._
+  - [x] **Is there a better more declarative method to setting up dotfiles other than chezmoi and home-manager that is baked into the custom image itself. In other words, I want the dotfiles to be setup when the custom image itself is being built.**
+    - _Resolved: If you want dotfiles baked strictly at build time without network calls on boot, the standard pattern on OSTree is: (1) In a build script, clone or copy the configs to a system directory like `/usr/share/dotfiles/` or system-wide XDG paths `/etc/xdg/` (which applications read as fallbacks); (2) Add a simple systemd user service (`rsync -a --ignore-existing /usr/share/dotfiles/ $HOME/`). However, Chezmoi is preferred by BlueBuild because it decouples dotfile updates from 10GB container image rebuilds and provides templating and conflict management._
 
 - [x] **Dotfiles setup should be done before determinate-nix and home-manager setup. The dotfiles will point to a home-manager folder in `~/.config/`.**
   - _Implemented: Enforced service ordering via `home-manager-init.service` with `After=chezmoi-init.service`. Chezmoi applies dotfiles to `~/.config/home-manager/` first, and then Home-Manager applies the user package configuration._
@@ -84,6 +90,9 @@
 
 - [x] **Determine if the current method of manually installing texlive distribution in build_files/build.sh is correct. You can ignore the fact that the texlive-full scheme makes the image extremely large.**
   - _Resolved & Fixed: The previous method installed to `/usr/local/texlive`. In Fedora Atomic / OSTree, `/usr/local` is a symlink to `/var/usrlocal`, which is NOT part of the read-only image and does NOT update across image rebases! The installer script has been updated to install to `/usr/lib/texlive` with `/etc/profile.d/texlive.sh`._
+
+  - [x] **Instead of using texlive-full I decided to use texlive-medium to reduce the size of the final image. However, there will be texlive packages that I would have otherwise installed using tlmgr from time to time. The texlive bash script needs the ability to install individual texlive packages as well.**
+    - _Implemented: `install-texlive.sh` is configured with `selected_scheme scheme-medium` and an `EXTRA_TL_PACKAGES=( ... )` array at the top of the script. During build time, after core installation, it automatically calls `tlmgr install "${EXTRA_TL_PACKAGES[@]}"` to bake requested packages (e.g. `latexmk`, `biber`) into `/usr/lib/texlive`. For post-boot installations without rebuilding the image, user-mode is supported via `tlmgr init-usertree && tlmgr --usermode install <pkg>`, which installs packages into `~/texmf`._
 
 - [x] **Also determine if the current method of manually installing zotero from the tarball is correct as well.**
   - _Resolved: The method of installing Zotero into `/usr/lib/zotero` with `/usr/bin/zotero` symlink, desktop entry, and `DisableAppUpdate` policy in `distribution/policies.json` is verified as 100% correct and standard for immutable systems._

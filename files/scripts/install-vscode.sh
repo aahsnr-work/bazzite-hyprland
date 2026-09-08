@@ -20,7 +20,7 @@ EOF
 fi
 
 # Install code with temporary repo enablement
-dnf -y install --enablerepo=code code || dnf5 -y install --enablerepo=code code
+dnf -y --setopt=install_weak_deps=False install --enablerepo=code code || dnf5 -y --setopt=install_weak_deps=False install --enablerepo=code code
 
 # Guarantee vscode.repo remains disabled on the finished image
 sed -i "s/enabled=.*/enabled=0/g" /etc/yum.repos.d/vscode.repo

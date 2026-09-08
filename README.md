@@ -134,7 +134,15 @@ sequenceDiagram
 
 ### 1. TeX Live on Immutable OSTree
 - **Issue**: Installing into `/usr/local/texlive` breaks on Fedora Atomic because `/usr/local` is a symlink to `/var/usrlocal`. Content written to `/var` at container build time is only seeded on first deployment and is **never updated on subsequent image rebases**.
-- **Fix**: TeX Live is installed to `/usr/lib/texlive`, a genuine, versioned part of `/usr` that updates cleanly with every image build. `/etc/profile.d/texlive.sh` sets `PATH`, `MANPATH`, and `INFOPATH`.
+- **Fix**: TeX Live is installed to `/usr/lib/texlive` (using `scheme-medium`), a genuine, versioned part of `/usr` that updates cleanly with every image build. `/etc/profile.d/texlive.sh` sets `PATH`, `MANPATH`, and `INFOPATH`.
+- **Individual Package Management**:
+  - **Build-Time Packages**: Add package names to `EXTRA_TL_PACKAGES=( ... )` inside [`files/scripts/install-texlive.sh`](file:///home/ahsan/Git/configs/bazzite-hyprland/files/scripts/install-texlive.sh). These packages are baked into the immutable image via `tlmgr install` during build.
+  - **Runtime Post-Boot Packages**: Since `/usr/lib/texlive` is read-only at runtime, install additional packages into your personal user tree without root permissions:
+    ```bash
+    tlmgr init-usertree
+    tlmgr --usermode install <package-name>
+    ```
+    This installs packages to `~/texmf`, fully preserved across image updates.
 
 ### 2. Fonts Baked at Build-Time
 - **Issue**: Relying on Homebrew casks at runtime to install fonts causes significant login delays, fails when network access is restricted, and leaves fonts unavailable for the display manager / greeter.
@@ -147,6 +155,51 @@ sequenceDiagram
 ### 4. Topgrade on Atomic Systems
 - **Issue**: Topgrade by default runs raw `dnf upgrade` or attempts to touch read-only root paths.
 - **Fix**: A curated `/etc/topgrade.toml` disables host package manager steps (`dnf`, `rpm-ostree`, `system`) and enables `home_manager = true`, `flatpak = true`, and `cleanup = true`.
+
+### 5. Determinate Nix: First-Boot Service vs. Build-Time Baking
+- **Architectural Requirement**: On Fedora Atomic/OSTree (`composefs`), the root filesystem `/` and `/usr` are mounted strictly **read-only**. However, Nix requires `/nix/store` to be **writable at runtime** so you can install packages, evaluate flakes, and use Home-Manager.
+- **Why It Cannot Be Baked into `/nix` at Build Time**: If `/nix` were populated into the root image during container build, it would be baked into the read-only composefs image layer, rendering `nix profile install` and `home-manager switch` non-functional at runtime with `Read-only file system` errors.
+- **Solution**: The Determinate Nix `ostree` planner runs via `determinate-nix-init.service` on first boot. It initializes persistent, writable storage on `/var/nix` (since `/var` is the writable partition in OSTree), mounts `/var/nix` to `/nix` via `nix.mount`, and starts `nix-daemon`. The image root pre-bakes the `/nix` directory mountpoint (`files/scripts/setup-nix-base.sh`) so the bind mount point exists cleanly.
+
+### 6. Dotfiles: Chezmoi Selective Configuration vs. Image Baking
+- **Why Dotfiles Cannot Be Baked Directly into `$HOME` at Build Time**:
+  - In OSTree systems, `/home` is a symlink to `/var/home`.
+  - `/var` contains persistent, local user data and is **never overwritten or populated by OSTree image rebases/updates**.
+  - During container image build time on GitHub Actions, your local user account does not exist.
+  - If dotfiles were placed in `/etc/skel/`, they would only be copied when creating a **brand-new user** via `useradd`. For an **existing user** rebasing from Fedora Silverblue, `/etc/skel` is ignored.
+- **Why the BlueBuild Chezmoi Module is the Recommended Standard**:
+  - Decouples OS image builds from dotfile tweaks (you don't have to rebuild a 10GB container image just to change a keybinding in Hyprland).
+  - Automatically clones and applies your repository (`https://github.com/aahsnr-configs/dots`) on login via `chezmoi-init.service`.
+  - Continuously synchronizes updates via `chezmoi-update.timer`.
+
+#### How to Selectively Filter Files and Folders in Chezmoi
+To control exactly which files and folders from `aahsnr-configs/dots` are applied to your system, add a `.chezmoiignore` file to the root of your `dots` repository:
+
+```text
+# .chezmoiignore (placed in the root of https://github.com/aahsnr-configs/dots)
+
+# Ignore files or directories that you do NOT want applied on this machine:
+.bashrc
+.bash_profile
+legacy-configs/
+unwanted-tool/
+
+# Ignore specific desktop environments if your repo contains multiple configs:
+.config/sway/
+.config/i3/
+
+# You can also use chezmoi templates to conditionally include/exclude:
+# {{ if ne .chezmoi.hostname "my-bazzite-laptop" }}
+# .config/special-app/
+# {{ end }}
+```
+
+Chezmoi respects `.chezmoiignore` on every `chezmoi apply`, ensuring only the configs you choose are placed in your home directory.
+
+### 7. DNF Weak Dependencies Disabled
+- All DNF module transactions (`recipes/recipe.yml`) explicitly configure `install-weak-deps: false`.
+- All custom install scripts (`install-vscode.sh`, `install-brave.sh`) pass `--setopt=install_weak_deps=False`.
+- This prevents DNF from installing hundreds of optional recommended packages, keeping the image lean and fast.
 
 ---
 
