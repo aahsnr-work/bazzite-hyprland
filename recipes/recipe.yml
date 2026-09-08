@@ -1,0 +1,206 @@
+# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
+name: bazzite-hyprland
+description: Custom Universal Blue / Bazzite image with Hyprland, Noctalia Greeter, and baked developer tools.
+base-image: ghcr.io/ublue-os/bazzite-gnome-nvidia-open
+image-version: latest
+
+modules:
+  - type: files
+    files:
+      - source: system
+        destination: /
+
+  # Pass 1: Fedora-native packages only — no COPR, no Terra, no 3rd-party repos.
+  # kitty, kitty-*, cliphist, qt6ct, neovim, mpv, and all standard packages
+  # MUST be installed here to guarantee they come from official Fedora repos,
+  # not from lionheartp/Hyprland COPR (which ships its own kitty, cliphist,
+  # qt6ct builds) or from Terra (which ships neovim, mpv, etc.).
+  - type: dnf
+    remove:
+      packages:
+        - "gnome-shell*"
+        - "gnome-control-center*"
+        - "gnome-session*"
+        - "gnome-initial-setup*"
+        - "gnome-classic-session*"
+        - "gnome-tour*"
+        - "gnome-extensions-app*"
+        - "gnome-system-monitor*"
+        - "gnome-remote-desktop*"
+        - "gnome-user-share*"
+        - "mutter*"
+        - "nautilus*"
+        - "xdg-desktop-portal-gnome*"
+        - gdm
+        - ptyxis
+        - steamdeck-gnome-presets
+    install:
+      packages:
+        # Terminal emulator — must come from Fedora, NOT lionheartp/Hyprland COPR
+        - kitty
+        - kitty-shell-integration
+        - kitty-terminfo
+
+        # Wayland / desktop utilities that also exist in COPR — pin to Fedora
+        - cliphist
+        - qt5ct
+        - qt6ct
+        - accountsservice
+        - greetd
+        - xdg-desktop-portal
+        - xdg-user-dirs
+        - xdg-user-dirs-gtk
+        - gsettings-desktop-schemas
+        - gtk4-layer-shell
+        - gnome-keyring
+        - gnome-tweaks
+
+        # Editors & tools that exist in Terra — pin to Fedora
+        - neovim
+        - mpv
+
+        # Node / npm — exclusively from Fedora (not Nix, not Terra, not Homebrew)
+        - nodejs
+        - npm
+
+        # Build tools & common utilities (all from Fedora)
+        - bleachbit
+        - bluez
+        - bluez-tools
+        - brightnessctl
+        - cmake
+        - cronie
+        - curl
+        - ddcutil
+        - direnv
+        - distrobox
+        - evolution-data-server
+        - fail2ban
+        - file-roller
+        - fontconfig
+        - fonts-filesystem
+        - gcc-c++
+        - git
+        - go
+        - grim
+        - gzip
+        - hunspell
+        - ImageMagick
+        - imv
+        - inotify-tools
+        - jq
+        - logrotate
+        - luajit
+        - lynis
+        - ninja-build
+        - papers
+        - papirus-icon-theme
+        - pipewire
+        - pipewire-alsa
+        - pipewire-gstreamer
+        - pipewire-pulseaudio
+        - pipewire-utils
+        - pipx
+        - pkgconf-pkg-config
+        - policycoreutils-python-utils
+        - pymol
+        - slurp
+        - sqlite
+        - swappy
+        - transmission-gtk
+        - udiskie
+        - xorg-x11-server-Xorg
+        - xorg-x11-server-Xwayland
+        - zathura
+        - zathura-pdf-mupdf
+
+        # NVIDIA userspace extras (from Fedora / RPM Fusion on bazzite base)
+        - nvidia-settings
+        - nvidia-persistenced
+        - egl-wayland
+        - libva-nvidia-driver
+        - libva-utils
+        - vulkan-tools
+
+  # Pass 2: COPR + Terra + 3rd-party repos.
+  # ONLY packages that REQUIRE these repos are listed here.
+  # Terra is enabled but ONLY zed must be pulled from it.
+  # All other packages come from their designated COPR or vendor repos.
+  # repos.cleanup: true disables and removes ALL added repos after this pass.
+  - type: dnf
+    repos:
+      cleanup: true
+      copr:
+        - lionheartp/Hyprland
+        - sneexy/zen-browser
+        - lilay/topgrade
+      files:
+        - https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
+        - https://github.com/terrapkg/subatomic-repos/raw/main/terra.repo
+      keys:
+        - https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
+        - https://packages.microsoft.com/keys/microsoft.asc
+    install:
+      skip-unavailable: true
+      packages:
+        # From lionheartp/Hyprland COPR
+        - hyprland-git
+        - hyprland-devel
+        - noctalia-git
+        - noctalia-greeter-git
+        - nwg-look
+        - xdg-desktop-portal-hyprland
+
+        # From lilay/topgrade COPR
+        - topgrade
+
+        # From sneexy/zen-browser COPR
+        - zen-browser
+
+        # From Brave Browser vendor repo
+        - brave-browser
+        - brave-origin
+
+        # From Microsoft VSCode repo
+        # (vscode.repo is deployed with enabled=0 via files/system/;
+        # this explicit install pulls code with that repo enabled for build)
+        - code
+
+        # From Terra repo — ONLY this package; no other package must come from Terra
+        - zed
+
+  - type: fonts
+    fonts:
+      nerd-fonts:
+        - JetBrainsMono
+        - NerdFontsSymbolsOnly
+      google-fonts:
+        - JetBrains Mono
+        - Noto Emoji
+        - Noto Color Emoji
+
+  - type: script
+    scripts:
+      - setup-nix-base.sh
+      - install-texlive.sh
+      - install-zotero.sh
+      - install-obsidian.sh
+
+  - type: chezmoi
+    repository: "https://github.com/aahsnr-configs/dots"
+    file-conflict-policy: replace
+    all-users: true
+    run-every: 1d
+
+  - type: systemd
+    system:
+      enabled:
+        - greetd.service
+        - accounts-daemon.service
+        - determinate-nix-init.service
+      disabled:
+        - gdm.service
+    user:
+      enabled:
+        - home-manager-init.service
+

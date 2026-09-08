@@ -1,0 +1,40 @@
+{
+  "recentFiles": [
+    {
+      "basename": "TODO",
+      "path": "TODO.md"
+    },
+    {
+      "basename": "misc",
+      "path": "misc.md"
+    },
+    {
+      "basename": "README",
+      "path": "README.md"
+    },
+    {
+      "basename": "03-Theoretical-Foundations",
+      "path": "Sections/03-Theoretical-Foundations.md"
+    },
+    {
+      "basename": "2026-09-04",
+      "path": "Sections/2026-09-04.md"
+    },
+    {
+      "basename": "202609042314",
+      "path": "Sections/202609042314.md"
+    },
+    {
+      "basename": "literature-note-template",
+      "path": "Templates/literature-note-template.md"
+    },
+    {
+      "basename": "Start Here",
+      "path": "TaskNotes/Start Here.md"
+    }
+  ],
+  "omittedPaths": [],
+  "omittedTags": [],
+  "updateOn": "file-open",
+  "omitBookmarks": false
+}

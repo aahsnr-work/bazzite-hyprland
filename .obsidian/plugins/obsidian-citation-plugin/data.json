@@ -1,0 +1,9 @@
+{
+  "citationExportPath": "References.bib",
+  "citationExportFormat": "biblatex",
+  "literatureNoteTitleTemplate": "@{{citekey}}",
+  "literatureNoteFolder": "Sources",
+  "markdownCitationTemplate": "[@{{citekey}}]",
+  "markdownCitationTemplateAlternative": "@{{citekey}}",
+  "note": "This plugin reads References.bib as a static file and never talks to Zotero directly -- use it for [@citekey] autocomplete while writing. For live Zotero sync and literature-note generation, use ZotLit instead (see README.md)."
+}

@@ -1,0 +1,24 @@
+# Topgrade configuration tailored for Fedora Atomic / bootc immutable systems.
+# Host package updates (dnf/rpm-ostree) are disabled to prevent conflicts with
+# read-only root filesystems and automated image updates.
+
+[misc]
+assume_yes = true
+disable = [
+    "dnf",
+    "system",
+    "containers",
+    "rpm_ostree",
+    "brew",
+]
+cleanup = true
+
+[linux]
+arch_package_manager = false
+home_manager = true
+flatpak = true
+
+[git]
+max_concurrency = 5
+pull_predefined = true
+

@@ -1,0 +1,11 @@
+{
+  "enabledCssSnippets": [
+    "supercharged-links-gen",
+    "noctalia"
+  ],
+  "theme": "obsidian",
+  "cssTheme": "Tokyo Night",
+  "interfaceFontFamily": "JetBrains Mono",
+  "textFontFamily": "JetBrains Mono",
+  "monospaceFontFamily": "JetBrains Mono"
+}
