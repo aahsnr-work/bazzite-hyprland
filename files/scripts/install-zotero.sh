@@ -6,9 +6,9 @@ ZOTERO_INSTALL_DIR="/usr/lib/zotero"
 ZOTERO_TMP="$(mktemp -d)"
 trap 'rm -rf "${ZOTERO_TMP}"' EXIT
 
-if curl -fsSL 'https://www.zotero.org/download/client/dl?channel=release&platform=linux-x86_64' -o "${ZOTERO_TMP}/zotero.tar.bz2"; then
+if curl -fsSL 'https://www.zotero.org/download/client/dl?channel=release&platform=linux-x86_64' -o "${ZOTERO_TMP}/zotero.tar.archive"; then
   mkdir -p "${ZOTERO_INSTALL_DIR}"
-  tar -xjf "${ZOTERO_TMP}/zotero.tar.bz2" -C "${ZOTERO_INSTALL_DIR}" --strip-components=1
+  tar -xf "${ZOTERO_TMP}/zotero.tar.archive" -C "${ZOTERO_INSTALL_DIR}" --strip-components=1
   "${ZOTERO_INSTALL_DIR}/set_launcher_icon" || true
   if [ -f "${ZOTERO_INSTALL_DIR}/zotero.desktop" ]; then
     install -Dm644 "${ZOTERO_INSTALL_DIR}/zotero.desktop" /usr/share/applications/zotero.desktop
