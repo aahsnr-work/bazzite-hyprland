@@ -92,7 +92,7 @@ flowchart TD
    - `install-zotero.sh`: Unpacks Zotero `.tar.xz` into `/usr/lib/zotero` with desktop launcher and update policy disabled.
    - `install-obsidian.sh`: Extracts SquashFS AppImage into `/usr/lib/obsidian` with system links.
 7. **Chezmoi Module**: Registers `chezmoi-init.service` and `chezmoi-update.timer` targeting `https://github.com/aahsnr-configs/dots`.
-8. **Systemd Module**: Enables `greetd`, `accounts-daemon`, and `determinate-nix-init.service`; disables `gdm.service`.
+8. **Systemd Module**: Enables `greetd.service`, `accounts-daemon.service`, and `determinate-nix-init.service` (`gdm` package and service were already uninstalled in Pass 1).
 9. **Cosign & GHCR**: Image is signed with Sigstore Cosign and pushed to GitHub Container Registry.
 
 ---

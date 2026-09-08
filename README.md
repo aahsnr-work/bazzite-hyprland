@@ -87,7 +87,7 @@ flowchart TD
    - `install-zotero.sh`: Extracts official Zotero tarball into `/usr/lib/zotero`, creates `/usr/bin/zotero`, installs desktop launcher, and writes `distribution/policies.json` to disable internal self-updates.
    - `install-obsidian.sh`: Downloads official Obsidian AppImage, extracts SquashFS into `/usr/lib/obsidian`, symlinks `/usr/bin/obsidian`, and integrates `.desktop` file and application icon into `/usr/share/`.
 6. **Chezmoi Module**: Configures `https://github.com/aahsnr-configs/dots` with `file-conflict-policy: replace` and `all-users: true`. Automatically registers `chezmoi-init.service` and daily `chezmoi-update.timer`.
-7. **Systemd Module**: Enables `greetd.service`, `accounts-daemon.service`, and `determinate-nix-init.service`; disables `gdm.service`; enables `home-manager-init.service` for user sessions.
+7. **Systemd Module**: Enables `greetd.service`, `accounts-daemon.service`, and `determinate-nix-init.service` (`gdm` package was already uninstalled in Pass 1); enables `home-manager-init.service` for user sessions.
 8. **Signing & Registry Push**: Image is signed with Cosign (`${{ secrets.SIGNING_SECRET }}`) and published to GHCR.
 
 ---

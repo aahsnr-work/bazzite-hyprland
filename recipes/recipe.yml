@@ -190,8 +190,6 @@ modules:
         - greetd.service
         - accounts-daemon.service
         - determinate-nix-init.service
-      disabled:
-        - gdm.service
     user:
       enabled:
         - home-manager-init.service
