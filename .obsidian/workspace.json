@@ -25,12 +25,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "TODO.md",
+                "file": "README.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "TODO"
+              "title": "README"
             }
           }
         ],
@@ -116,7 +116,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200
+    "width": 200,
+    "collapsed": true
   },
   "right": {
     "id": "1132458b2797fb48",
@@ -275,10 +276,9 @@
   },
   "active": "e7f62a205c5bf6e8",
   "lastOpenFiles": [
-    "misc.md",
-    "README.md",
-    "202609081635.md",
-    "202609081636.md",
+    "cosign.pub",
+    "cosign.key",
+    "TODO.md",
     "TaskNotes/Views/relationships.base",
     "TaskNotes/Views/pomodoro-stats.base",
     "TaskNotes/Views/agenda-default.base",
@@ -288,11 +288,14 @@
     "TaskNotes/Views/mini-calendar-default.base",
     "TaskNotes/Views",
     "TaskNotes",
+    "misc.md",
+    "README.md",
+    "202609081635.md",
+    "202609081636.md",
     "Sections/2026-09-04.md",
     "Sections/202609042314.md",
     "Templates/literature-note-template.md",
     "TaskNotes/Start Here.md",
-    "Quantum-Error-Correction-Review.pdf",
     "00-Home.md"
   ]
 }
