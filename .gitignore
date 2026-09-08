@@ -5,5 +5,5 @@ _build-*/**
 *_chunkah_*
 *_rpm-ostree_*
 legacy_backup/
-TaskNotes/
+TaskNotes/*
 /.bluebuild-scripts_*
