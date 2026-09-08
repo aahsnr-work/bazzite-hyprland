@@ -11,10 +11,9 @@ modules:
         destination: /
 
   # Pass 1: Fedora-native packages only — no COPR, no Terra, no 3rd-party repos.
-  # kitty, kitty-*, cliphist, qt6ct, neovim, mpv, and all standard packages
+  # kitty, kitty-*, neovim, mpv, and all standard packages
   # MUST be installed here to guarantee they come from official Fedora repos,
-  # not from lionheartp/Hyprland COPR (which ships its own kitty, cliphist,
-  # qt6ct builds) or from Terra (which ships neovim, mpv, etc.).
+  # not from Terra (which ships neovim, mpv, etc.).
   - type: dnf
     remove:
       packages:
@@ -121,9 +120,6 @@ modules:
         - libva-utils
         - vulkan-tools
 
-  # Pass 2: COPR + Terra + 3rd-party repos.
-  # ONLY packages that REQUIRE these repos are listed here.
-  # Terra is enabled but ONLY zed must be pulled from it.
   # Pass 2: COPR + Terra repos.
   # ONLY packages that REQUIRE these repos are listed here.
   # Terra is enabled but ONLY zed must be pulled from it.
