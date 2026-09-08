@@ -19,8 +19,10 @@ Everything is baked directly into the image at build time so that when rebasing 
 │   └── recipe.yml                  # Declarative BlueBuild image recipe & module pipeline
 ├── files/
 │   ├── scripts/                    # Modular build-time shell scripts
+│   │   ├── install-brave.sh        # Installs Brave Browser & Brave Origin
 │   │   ├── install-obsidian.sh     # Extracts Obsidian AppImage into /usr/lib/obsidian
-│   │   ├── install-texlive.sh      # Installs TeX Live (scheme-full) into /usr/lib/texlive
+│   │   ├── install-texlive.sh      # Installs TeX Live (scheme-medium + tlmgr packages) into /usr/lib/texlive
+│   │   ├── install-vscode.sh       # Installs VS Code via Microsoft repo (enabled=0)
 │   │   ├── install-zotero.sh       # Installs Zotero to /usr/lib/zotero with policy overrides
 │   │   └── setup-nix-base.sh       # Prepares /nix directory mountpoint in image root
 │   └── system/                     # Filesystem overlay mapped directly to /
@@ -29,17 +31,21 @@ Everything is baked directly into the image at build time so that when rebasing 
 │       │   │   └── config.toml     # greetd configured for noctalia-greeter-session
 │       │   ├── pam.d/
 │       │   │   └── greetd          # PAM stack with gnome-keyring auto-unlock
+│       │   ├── profile.d/
+│       │   │   └── 00-custom-environment.sh # System-wide XDG, default apps & PATH variables
 │       │   ├── topgrade.toml       # Topgrade tailored for Atomic OS & Home-Manager
 │       │   └── yum.repos.d/
 │       │       └── vscode.repo     # Microsoft repo (enabled=0 per Bluefin pattern)
 │       └── usr/
-│           └── lib/
-│               └── systemd/
-│                   ├── system/
-│                   │   └── determinate-nix-init.service  # First-boot OSTree Nix daemon setup
-│                   └── user/
-│                       └── home-manager-init.service     # First-login home-manager switch
+│           ├── lib/systemd/
+│           │   ├── system/
+│           │   │   └── determinate-nix-init.service  # First-boot OSTree Nix daemon setup
+│           │   └── user/
+│           │       └── home-manager-init.service     # First-login home-manager switch
+│           └── share/ublue-os/just/
+│               └── 60-custom.just  # Native ujust CLI recipes for bazzite-hyprland
 ├── Justfile                        # Local testing and build commands via BlueBuild CLI
+├── SPECIFICATION.md                # Unified master specification & architecture document
 ├── TODO.md                         # Detailed specification and completion tracking
 └── misc.md                         # Architecture decisions (Runner environment)
 ```
@@ -200,6 +206,37 @@ Chezmoi respects `.chezmoiignore` on every `chezmoi apply`, ensuring only the co
 - All DNF module transactions (`recipes/recipe.yml`) explicitly configure `install-weak-deps: false`.
 - All custom install scripts (`install-vscode.sh`, `install-brave.sh`) pass `--setopt=install_weak_deps=False`.
 - This prevents DNF from installing hundreds of optional recommended packages, keeping the image lean and fast.
+
+### 8. System Environment Variables & Default Applications
+- The file [`files/system/etc/profile.d/00-custom-environment.sh`](file:///home/ahsan/Git/configs/bazzite-hyprland/files/system/etc/profile.d/00-custom-environment.sh) is sourced system-wide on login.
+- Sets standard XDG directories (`XDG_CONFIG_HOME`, `XDG_DATA_HOME`, etc.).
+- Configures default tools: `TERMINAL="kitty"`, `BROWSER="brave"`, `EDITOR="nvim"`, `PAGER="bat"`.
+- Prepends user binary directories (`~/.local/bin`, `~/.npm-global/bin`, `~/go/bin`, `~/.cargo/bin`, `~/bin`) and Nix profiles (`~/.nix-profile/bin`, `/nix/var/nix/profiles/default/bin`) to `PATH`.
+
+---
+
+## System Management via `ujust`
+
+Bazzite includes `ujust` as a user-friendly CLI runner. This image ships with [`/usr/share/ublue-os/just/60-custom.just`](file:///home/ahsan/Git/configs/bazzite-hyprland/files/system/usr/share/ublue-os/just/60-custom.just):
+
+| Command | Action |
+|---------|--------|
+| `ujust setup-nix` | Verify or trigger the Determinate Nix installer |
+| `ujust update-nix` | Update Nix flake registries and user channels |
+| `ujust switch-home-manager` | Re-evaluate and switch `~/.config/home-manager/` |
+| `ujust sync-dotfiles` | Pull and apply latest Chezmoi dotfiles immediately |
+| `ujust update-hyprpm` | Rebuild and update Hyprland plugins in userspace |
+| `ujust texlive-install <pkg>` | Install a LaTeX package into `~/texmf` (user mode) |
+| `ujust texlive-update` | Update all user-installed LaTeX packages |
+| `ujust fix-git-index` | Instantly repair corrupted/0-byte `.git/index` |
+| `ujust bazzite-cleanup` | Collect Nix garbage (`nix-collect-garbage -d`) and clean system caches |
+
+---
+
+## Unified Master Specification
+
+For complete in-depth documentation, requirement traceability matrix, architectural Q&A, and debugging runbooks, refer to the consolidated master specification:
+👉 **[`SPECIFICATION.md`](file:///home/ahsan/Git/configs/bazzite-hyprland/SPECIFICATION.md)**
 
 ---
 

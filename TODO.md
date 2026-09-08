@@ -7,6 +7,18 @@
 - [x] **In build.sh all copr repos must be enabled in a group and then disabled later in build.sh as a group.**
   - _Implemented via BlueBuild `recipes/recipe.yml` using the declarative `dnf` module. All COPR repositories (`lionheartp/Hyprland`, `sneexy/zen-browser`, `lilay/topgrade`) are grouped under `repos.copr`, and `repos.cleanup: true` automatically disables and removes them post-package installation so no lingering repositories remain enabled._
 
+- [x] **You cannot add hyprland-devel when install hyprland-git from the hyprland fedora copr repo. And you must install cliphist, qt6ct from the hyprland copr repo as well.**
+  - _Implemented: Removed `hyprland-devel` from `recipes/recipe.yml` (since `hyprland-git` from the COPR bundles headers directly and conflicts with Fedora's devel package). Moved `cliphist` and `qt6ct` from Pass 1 to Pass 2 so they are installed directly from `lionheartp/Hyprland` COPR for proper Wayland integration._
+
+- [x] **Also look at all the files of the git repos listed in Suggestions.md file.**
+  - _Resolved: Inspected architectures from `randogoth/deinonyxus`, `arnettpa/bazzite-dx`, and `4evy/dotfiles`. Extracted best practices for custom `ujust` system scripts, modular helper scripts, and clean separation between host immutable packages and user Home-Manager packages._
+
+- [x] **modularize all the files that could benefit form it. You can reorganize the bazzit-hyprland project tree so that is better Make use ujust files where necessary. And follow best practices for this kind of project.**
+  - _Implemented: Cleanly modularized build scripts in `files/scripts/`. Added native system-wide task runner `/usr/share/ublue-os/just/60-custom.just` with recipes for Nix (`setup-nix`, `update-nix`), Home-Manager (`switch-home-manager`), Chezmoi (`sync-dotfiles`), Hyprland plugins (`update-hyprpm`), TeX Live user mode (`texlive-install`, `texlive-update`), Git index recovery (`fix-git-index`), and system cleanup (`bazzite-cleanup`). Enhanced `Justfile` with `just check` and `just fix-git`._
+
+- [x] **Also combine implementation_plan.md, misc.md, walkthrough.md and TODO.md into one large appropriately named markdown file. But make sure that the README.md file also has a gist of everything from this large combined markdown file.**
+  - _Implemented: Consolidated all documentation into `SPECIFICATION.md`, providing full requirements traceability, architecture diagrams, build/runtime lifecycle specifications, ujust command references, and troubleshooting guides. Updated `README.md` to provide a complete executive gist of the entire system._
+
 - [x] **For dnf installed packages you must include --setopt=install_weak_deps=False**
   - _Implemented: Configured `install-weak-deps: false` across both Pass 1 and Pass 2 in `recipes/recipe.yml`. Also passed `--setopt=install_weak_deps=False` to `dnf install` commands in `files/scripts/install-vscode.sh` and `files/scripts/install-brave.sh`. This prevents unnecessary optional packages from bloating the image._
 

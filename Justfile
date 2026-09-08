@@ -25,3 +25,12 @@ dry-run:
 switch tag=default_tag:
     bootc switch --transport containers-storage "localhost/{{image_name}}:{{tag}}"
 
+# Run all lint and syntax checks (shell scripts and BlueBuild recipe)
+check:
+    bash -n files/scripts/*.sh
+    @just validate
+
+# Repair corrupted .git/index (index file smaller than expected)
+fix-git:
+    rm -f .git/index && git reset
+
