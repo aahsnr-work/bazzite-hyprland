@@ -42,9 +42,7 @@ modules:
         - kitty-terminfo
 
         # Wayland / desktop utilities that also exist in COPR — pin to Fedora
-        - cliphist
         - qt5ct
-        - qt6ct
         - accountsservice
         - greetd
         - xdg-desktop-portal
@@ -84,13 +82,11 @@ modules:
         - go
         - grim
         - gzip
-        - hunspell
         - ImageMagick
         - imv
         - inotify-tools
         - jq
         - logrotate
-        - luajit
         - lynis
         - ninja-build
         - papers
@@ -112,7 +108,8 @@ modules:
         - xorg-x11-server-Xorg
         - xorg-x11-server-Xwayland
         - zathura
-        - zathura-pdf-mupdf
+        - zathura-pdf-poppler
+        - zathura-plugins-all
 
         # NVIDIA userspace extras (from Fedora / RPM Fusion on bazzite base)
         - nvidia-settings
@@ -141,14 +138,15 @@ modules:
         - https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
         - https://packages.microsoft.com/keys/microsoft.asc
     install:
-      skip-unavailable: true
+      skip-unavailable: false
       packages:
         # From lionheartp/Hyprland COPR
+        - cliphist
         - hyprland-git
-        - hyprland-devel
         - noctalia-git
         - noctalia-greeter-git
         - nwg-look
+        - qt6ct
         - xdg-desktop-portal-hyprland
 
         # From lilay/topgrade COPR
