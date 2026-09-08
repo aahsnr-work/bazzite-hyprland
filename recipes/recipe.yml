@@ -171,7 +171,6 @@ modules:
       - setup-nix-base.sh
       - install-vscode.sh
       - install-brave.sh
-      - install-texlive.sh
       - install-zotero.sh
       - install-obsidian.sh
 

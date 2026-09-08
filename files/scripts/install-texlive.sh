@@ -11,7 +11,7 @@ trap 'rm -rf "${TEXLIVE_TMP}"' EXIT
 if curl -fsSL https://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz -o "${TEXLIVE_TMP}/install-tl-unx.tar.gz"; then
   tar -xzf "${TEXLIVE_TMP}/install-tl-unx.tar.gz" -C "${TEXLIVE_TMP}"
   cat >"${TEXLIVE_TMP}/texlive.profile" <<EOF
-selected_scheme scheme-full
+selected_scheme scheme-medium
 TEXDIR ${TEXLIVE_INSTALL_DIR}
 TEXMFLOCAL ${TEXLIVE_INSTALL_DIR}/texmf-local
 TEXMFSYSVAR ${TEXLIVE_INSTALL_DIR}/texmf-var
