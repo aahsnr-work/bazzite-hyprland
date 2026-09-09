@@ -14,7 +14,12 @@ modules:
     remove:
       packages:
         - bluez-cups
+        - cage
         - "cardwire*"
+        - evolution-data-server
+        - evolution-data-server-langpacks
+        - evolution-ews-core
+        - evolution-ews-langpacks
         - gdm
         - gnome-bluetooth
         - gnome-bluetooth-libs
