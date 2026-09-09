@@ -44,11 +44,17 @@ modules:
         - gnome-user-share
         - gstreamer1-plugins-good-qt
         - gstreamer1-plugins-good-qt6
-        - hunspell-en-AU 
+        - jupiter-sd-mounting-btrfs
+        - hunspell-en-AU
         - "mutter*"
         - "nano*"
         - "nautilus*"
         - NetworkManager-ssh-gnome
+        - openrazer
+        - papers-libs
+        - papers-nautilus
+        - papers-previewer
+        - papers-thumbnailer
         - "papers*"
         - ptyxis
         # - steamdeck-gnome-presets
