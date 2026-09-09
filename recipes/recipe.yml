@@ -17,22 +17,22 @@ modules:
   - type: dnf
     remove:
       packages:
-          - "gnome-shell*"
-          - "gnome-control-center*"
-          - "gnome-session*"
-          - "gnome-initial-setup*"
-          - "gnome-classic-session*"
-          - "gnome-tour*"
-          - "gnome-extensions-app*"
-          - "gnome-system-monitor*"
-          - "gnome-remote-desktop*"
-          - "gnome-user-share*"
-          - "mutter*"
-          - "nautilus*"
-          - "xdg-desktop-portal-gnome*"
-          - gdm
-          - ptyxis
-          - steamdeck-gnome-presets
+        - "gnome-shell*"
+        - "gnome-control-center*"
+        - "gnome-session*"
+        - "gnome-initial-setup*"
+        - "gnome-classic-session*"
+        - "gnome-tour*"
+        - "gnome-extensions-app*"
+        - "gnome-system-monitor*"
+        - "gnome-remote-desktop*"
+        - "gnome-user-share*"
+        - "mutter*"
+        - "nautilus*"
+        - "xdg-desktop-portal-gnome*"
+        - gdm
+        - ptyxis
+        - steamdeck-gnome-presets
     install:
       skip-unavailable: false
       install-weak-deps: false
