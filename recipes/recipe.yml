@@ -42,6 +42,11 @@ modules:
         - gnome-srpm-macros
         - gnome-user-docs
         - gnome-user-share
+        - go-srpm-macros
+        - google-noto-sans-balinese-fonts
+        - google-noto-sans-cjk-fonts
+        - google-noto-sans-javanese-fonts
+        - google-noto-sans-sundanese-fonts
         - gstreamer1-plugins-good-qt
         - gstreamer1-plugins-good-qt6
         - jupiter-sd-mounting-btrfs
@@ -50,7 +55,10 @@ modules:
         - mutter-common
         - nano
         - nano-default-editor
-        - "nautilus*"
+        - nautilus
+        - nautilus-extensions
+        - nautilus-gsconnect
+        - nautilus-python
         - NetworkManager-ssh-gnome
         - openrazer
         - papers-libs
@@ -61,13 +69,15 @@ modules:
         # - pipewire-jack-audio-connection-kit
         # - pipewire-jack-audio-connection-kit-libs
         - ptyxis
-        - twitter-twemoji-fonts 
+        - twitter-twemoji-fonts
         - rom-properties
         - rom-properties-common
         - rom-properties-gtk4
         - rom-properties-localsearch3
         - rom-properties-utils
         - "steamdeck*"
+        - tree-sitter-srpm-macros
+        - twitter-twemoji-fonts
         - "vim*"
         - "xdg-desktop-portal-gnome*"
         - yad
@@ -132,6 +142,7 @@ modules:
         - sqlite
         - swappy
         - transmission-gtk
+        - tree-sitter-cli
         - udiskie
         - xdg-desktop-portal
         - xdg-user-dirs
