@@ -166,7 +166,6 @@ modules:
       - install-brave.sh
       - install-zotero.sh
       - install-obsidian.sh
-      - install-texlive.sh
 
   - type: chezmoi
     repository: "https://github.com/aahsnr-configs/dots"
