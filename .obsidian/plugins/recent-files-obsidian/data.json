@@ -1,16 +1,20 @@
 {
   "recentFiles": [
     {
+      "basename": "misc",
+      "path": "misc.md"
+    },
+    {
       "basename": "README",
       "path": "README.md"
     },
     {
-      "basename": "TODO",
-      "path": "TODO.md"
+      "basename": "walkthrough",
+      "path": "walkthrough.md"
     },
     {
-      "basename": "misc",
-      "path": "misc.md"
+      "basename": "TODO",
+      "path": "TODO.md"
     },
     {
       "basename": "03-Theoretical-Foundations",
