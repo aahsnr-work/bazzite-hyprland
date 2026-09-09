@@ -27,12 +27,39 @@ modules:
         - "gnome-system-monitor*"
         - "gnome-remote-desktop*"
         - "gnome-user-share*"
+        - "gnome-user-docs*"
+        - "gnome-rounded-blur*"
+        - "gnome-search-yafti*"
         - "mutter*"
         - "nautilus*"
+        - "papers*"
+        - "yelp*"
+        - "epiphany-runtime"
+        - "evolution*"
+        - "google-noto*"
         - "xdg-desktop-portal-gnome*"
+        - NetworkManager-ssh-gnome
+        - rygel
         - gdm
         - ptyxis
+        - "nano*"
+        - "vim-enhanced"
+        - "vim-common"
+        - "vim-data"
+        - "vim-filesystem"
+        - "virtualbox*"
+        - "cockpit*"
+        - "waydroid*"
         - steamdeck-gnome-presets
+        - steamdeck-backgrounds
+        - jupiter-sd-mounting-btrfs
+        - "cardwire*"
+        - framework-system
+        - "openrazer*"
+        - "kmod-openrazer*"
+        - "ryzen*"
+        - "ryzenadj*"
+        - "kmod-ryzen*"
     install:
       skip-unavailable: false
       install-weak-deps: false
@@ -53,6 +80,7 @@ modules:
         - gtk4-layer-shell
         - gnome-keyring
         - gnome-tweaks
+        - libinput-utils
 
         # Editors & tools that exist in Terra — pin to Fedora
         - neovim
@@ -73,7 +101,6 @@ modules:
         - ddcutil
         - direnv
         - distrobox
-        - evolution-data-server
         - fail2ban
         - file-roller
         - fontconfig

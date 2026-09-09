@@ -74,7 +74,7 @@ flowchart TD
 1. **Base Image Pull**: Begins from `ghcr.io/ublue-os/bazzite-gnome-nvidia-open:latest`.
 2. **Files Module**: Overlays `files/system/` onto `/` (Noctalia Greeter configs, PAM stack, Topgrade configuration, and systemd units).
 3. **DNF Module**:
-   - **Removals**: Strips GNOME Shell, GDM, Mutter, Nautilus, Ptyxis, and GNOME background sessions.
+   - **Removals**: Strips GNOME Shell, GDM, Mutter, Nautilus, legacy Papers, Ptyxis, GNOME tour/extensions/help/system-monitor, Rygel, Evolution Data Server (`evolution*`), Epiphany runtime, Nano (`nano*`), full Vim (`vim-enhanced`, `vim-common`, `vim-data`, `vim-filesystem`), VirtualBox guest additions (`virtualbox*`), Cockpit web console (`cockpit*`), Waydroid (`waydroid*`), Cardwire (`cardwire*`), Framework laptop tools (`framework-system`), OpenRazer (`openrazer*`, `kmod-openrazer*`), Ryzen power tools (`ryzen*`, `ryzenadj*`, `kmod-ryzen*`), and Steam Deck handheld packages (`steamdeck-gnome-presets`, `steamdeck-backgrounds`, `jupiter-sd-mounting-btrfs`).
    - **Repository Grouping**: Atomically enables COPRs (`lionheartp/Hyprland`, `sneexy/zen-browser`, `lilay/topgrade`), Brave repo + core key, Microsoft GPG key, and Terra repo (`terra.repo`).
    - **Package Installations**: Installs Hyprland, Noctalia greeter, Brave, Brave Origin, Zen Browser, VSCode (`code`), Zed, C++ build headers (`gcc-c++`, `cmake`, `ninja-build`, `pkgconf-pkg-config`, `git`), Node.js, npm, direnv, and audio/wayland utilities.
    - **Repository Cleanup**: `cleanup: true` immediately disables and removes all external repository files so no unexpected repos remain enabled post-build.
@@ -83,7 +83,7 @@ flowchart TD
    - `google-fonts`: `JetBrains Mono`, `Noto Emoji`, `Noto Color Emoji`
 5. **Script Module**:
    - `setup-nix-base.sh`: Pre-creates `/nix` directory mountpoint in the read-only root image.
-   - `install-texlive.sh`: Downloads official CTAN installer and performs non-interactive installation of TeX Live (scheme-full) into `/usr/lib/texlive` with `/etc/profile.d/texlive.sh`.
+   - `install-texlive.sh`: Downloads official CTAN installer and performs non-interactive installation of TeX Live (scheme-medium) into `/usr/lib/texlive` with `/etc/profile.d/texlive.sh` and build-time extensible packages (`EXTRA_TL_PACKAGES`).
    - `install-zotero.sh`: Extracts official Zotero tarball into `/usr/lib/zotero`, creates `/usr/bin/zotero`, installs desktop launcher, and writes `distribution/policies.json` to disable internal self-updates.
    - `install-obsidian.sh`: Downloads official Obsidian AppImage, extracts SquashFS into `/usr/lib/obsidian`, symlinks `/usr/bin/obsidian`, and integrates `.desktop` file and application icon into `/usr/share/`.
 6. **Chezmoi Module**: Configures `https://github.com/aahsnr-configs/dots` with `file-conflict-policy: replace` and `all-users: true`. Automatically registers `chezmoi-init.service` and daily `chezmoi-update.timer`.

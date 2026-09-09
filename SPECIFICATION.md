@@ -48,6 +48,7 @@ All tasks from `TODO.md` are fully implemented and verified:
 | 19 | **Zotero Installation** | Extracted into `/usr/lib/zotero` with `/usr/bin/zotero` symlink, desktop launcher, and `policies.json` disabling auto-updates. Archive extraction handles modern `.tar.xz` transparently. | Completed (`[x]`) |
 | 20 | **System-Wide Environment Variables** | Added POSIX-compliant `/etc/profile.d/00-custom-environment.sh` configuring XDG base directories, default apps (kitty, brave, nvim), and prepending user binaries + Nix/Home-Manager paths to `PATH`. | Completed (`[x]`) |
 | 21 | **Native `ujust` Task Runner** | Created `/usr/share/ublue-os/just/60-custom.just` providing CLI commands for Nix, Home-Manager, Chezmoi, Hyprpm, TeX Live, Git index repair, and cleanup. | Completed (`[x]`) |
+| 22 | **bazzite-pkgs.txt Package Audit & Removals** | Audited all 1,513 packages in `bazzite-pkgs.txt`. Safely stripped GNOME desktop/session, Evolution Data Server, Epiphany runtime, Nano, full Vim, legacy Papers, VirtualBox guest additions, Cockpit, Waydroid, Cardwire, Framework laptop tools, OpenRazer, and Ryzen mobile power utilities, while preserving NVIDIA, Mesa, PipeWire, Steam, and sudo's `/bin/vi` dependency. | Completed (`[x]`) |
 
 ---
 
@@ -58,12 +59,12 @@ Executed on GitHub Actions (`ubuntu-24.04`) via `blue-build/github-action@v1` us
 ```mermaid
 flowchart TD
     A["1. Base Image Pull: bazzite-gnome-nvidia-open:latest"] --> B["2. files module: Overlay files/system/ to /"]
-    B --> C["3. dnf Pass 1: Remove GNOME, Install Fedora Packages (weak deps disabled)"]
+    B --> C["3. dnf Pass 1: Strip Bloat (GNOME, Evolution, Cockpit, Waydroid, etc.), Install Fedora Packages"]
     C --> D["4. dnf Pass 2: Enable COPRs & Terra, Install Hyprland stack & Zed, Cleanup Repos"]
     D --> E["5. fonts module: Bake JetBrainsMono & Noto Emoji into /usr/share/fonts/"]
     E --> F["6. script module: Run setup-nix, install-vscode, install-brave, texlive, zotero, obsidian"]
     F --> G["7. chezmoi module: Wire chezmoi-init.service & daily chezmoi-update.timer"]
-    G --> H["8. systemd module: Enable greetd, accounts-daemon, nix-init; Disable gdm"]
+    G --> H["8. systemd module: Enable greetd, accounts-daemon, nix-init"]
     H --> I["9. Cosign Signing & Push to GHCR"]
 ```
 
@@ -75,9 +76,14 @@ flowchart TD
    - `/usr/share/ublue-os/just/60-custom.just`
    - `/etc/topgrade.toml`
    - Systemd units (`determinate-nix-init.service`, `home-manager-init.service`)
-3. **DNF Pass 1 (Fedora-Native)**:
-   - Removes GNOME Shell, GDM, Mutter, Nautilus, Ptyxis, and GNOME background session packages.
-   - Installs native terminal emulator (`kitty`, `kitty-*`), desktop utilities (`qt5ct`, `greetd`, `accountsservice`, `gnome-keyring`), multimedia/audio stack (`pipewire`, `papirus-icon-theme`), build tools (`gcc-c++`, `cmake`, `ninja-build`, `git`, `go`), `nodejs`, and `npm`.
+3. **DNF Pass 1 (Fedora-Native & Package Removals)**:
+   - **Removals**: Strips unneeded package groups identified from `bazzite-pkgs.txt`:
+     - *GNOME Shell & Compositor*: `gnome-shell*`, `mutter*`, `gnome-control-center*`, `gnome-session*`, `gnome-initial-setup*`, `gnome-classic-session*`, `gnome-remote-desktop*`, `gnome-user-share*`, `gnome-user-docs*`, `gnome-rounded-blur*`, `gnome-search-yafti*`, `NetworkManager-ssh-gnome`, `rygel`, `gdm`.
+     - *Evolution & Epiphany*: `evolution*` (Evolution Data Server and EWS daemons), `epiphany-runtime` (GNOME Web runtime).
+     - *Redundant Editors & Viewers*: `nano*`, `vim-enhanced`, `vim-common`, `vim-data`, `vim-filesystem`, `ptyxis` (replaced by Kitty), `nautilus*`, `papers*` (stripped here, then cleanly re-installed below without nautilus extensions), `yelp*`, `gnome-tour*`, `gnome-system-monitor*`.
+     - *Virtualization & Web Consoles*: `virtualbox*`, `cockpit*`, `waydroid*`.
+     - *Handheld, Laptop & Mobile Hardware Drivers (Desktop Image)*: `cardwire*`, `framework-system`, `openrazer*`, `kmod-openrazer*`, `ryzen*`, `ryzenadj*`, `kmod-ryzen*`, `steamdeck-gnome-presets`, `steamdeck-backgrounds`, `jupiter-sd-mounting-btrfs`.
+   - **Installs**: Native terminal emulator (`kitty`), desktop utilities (`qt5ct`, `greetd`, `accountsservice`, `gnome-keyring`, `gnome-tweaks`), standalone document viewer (`papers`), multimedia/audio stack (`pipewire`), build tools (`gcc-c++`, `cmake`, `ninja-build`, `git`, `go`), `neovim`, `nodejs`, and `npm`.
    - Disables weak dependencies (`install-weak-deps: false`).
 4. **DNF Pass 2 (COPR & Terra)**:
    - Temporarily enables `lionheartp/Hyprland`, `sneexy/zen-browser`, `lilay/topgrade`, and `terra.repo`.
@@ -167,6 +173,24 @@ unwanted-tool/
 .bash_profile
 ```
 Chezmoi ignores matching paths during `chezmoi apply`.
+
+### Q5: Why not use a broad wildcard like `gnome*` to remove all GNOME packages?
+* Wildcards in DNF expand across all packages matching the prefix pattern. Specifying `gnome*` would inadvertently match and remove:
+  1. `gnome-keyring`: Critical system daemon providing secrets storage, SSH key management, and the PAM auto-unlock module (`pam_gnome_keyring.so`) invoked by `greetd`.
+  2. `gnome-tweaks`: Explicitly installed to configure GTK themes, dark mode preferences, and fonts.
+  3. `gnome-bluetooth-libs`: Shared library used by Wayland panels and Waybar status bars.
+  4. Core GTK schemas and thumbnailers (`gnome-desktop`, `gnome-autoar`) that non-GNOME Wayland applications rely on.
+* Instead, surgical targeting of `gnome-shell*`, `mutter*`, `gnome-control-center*`, `gnome-session*`, `gdm`, `gnome-remote-desktop*`, `gnome-user-share*`, `gnome-user-docs*`, `gnome-rounded-blur*`, `gnome-search-yafti*`, etc., strips 100% of the GNOME desktop overhead while keeping your secrets vault and theming utilities fully intact.
+
+### Q6: Why is `vim-minimal` preserved when removing Vim?
+* In Fedora, the `sudo` package has a hard RPM requirement on `/bin/vi` to support `visudo` (safe editing of `/etc/sudoers`).
+* This `/bin/vi` virtual provide is satisfied exclusively by `vim-minimal` (~1MB).
+* If `vim*` were specified in `remove.packages`, DNF would attempt to remove `vim-minimal`, causing either an immediate transaction failure (`Error: Problem: package sudo requires /bin/vi`) or the deletion of `sudo` (permanently locking the user out of administrative root access).
+* By explicitly removing `vim-enhanced`, `vim-common`, `vim-data`, and `vim-filesystem`, all heavy Vim binaries, runtime scripts, and syntax files are eliminated while preserving the tiny system stub required by `sudo`. Your active editor is Neovim (`nvim`), configured in `EDITOR="nvim"`.
+
+### Q7: What is the significance of `evolution*` and why is it removed?
+* `evolution-data-server` (EDS) and `evolution-ews` provide background calendar, contact, task, and address book factories designed for GNOME Shell's top-bar calendar widget and GNOME PIM apps.
+* In a Hyprland environment with web-based or CLI workflows, EDS runs persistent D-Bus background daemons that consume memory without any user-facing utility. Stripping `evolution*` eliminates this background overhead completely.
 
 ---
 
