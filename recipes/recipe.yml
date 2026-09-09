@@ -16,6 +16,8 @@ modules:
         - bluez-cups
         - cage
         - "cardwire*"
+        - epiphany-runtime
+        - erlang-srpm-macros
         - evolution-data-server
         - evolution-data-server-langpacks
         - evolution-ews-core
