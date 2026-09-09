@@ -28,6 +28,9 @@ modules:
         - "gnome-remote-desktop*"
         - "gnome-user-share*"
         - "mutter*"
+        - "papers*"
+        - NetworkManager-ssh-gnome
+        - "nano*"
         - "nautilus*"
         - "xdg-desktop-portal-gnome*"
         - gdm
