@@ -46,8 +46,10 @@ modules:
         - gstreamer1-plugins-good-qt6
         - jupiter-sd-mounting-btrfs
         - hunspell-en-AU
-        - "mutter*"
-        - "nano*"
+        - mutter
+        - mutter-common
+        - nano
+        - nano-default-editor
         - "nautilus*"
         - NetworkManager-ssh-gnome
         - openrazer
@@ -56,8 +58,8 @@ modules:
         - papers-previewer
         - papers-thumbnailer
         - "papers*"
-        - pipewire-jack-audio-connection-kit
-        - pipewire-jack-audio-connection-kit-libs
+        # - pipewire-jack-audio-connection-kit
+        # - pipewire-jack-audio-connection-kit-libs
         - ptyxis
         - rom-properties
         - rom-properties-common
