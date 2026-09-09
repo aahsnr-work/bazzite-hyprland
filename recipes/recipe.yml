@@ -10,67 +10,37 @@ modules:
       - source: system
         destination: /
 
-  # Pass 1: Fedora-native packages only — no COPR, no Terra, no 3rd-party repos.
-  # kitty, kitty-*, neovim, mpv, and all standard packages
-  # MUST be installed here to guarantee they come from official Fedora repos,
-  # not from Terra (which ships neovim, mpv, etc.).
   - type: dnf
     remove:
       packages:
         - "cardwire*"
-        - "gnome-shell*"
-        - "gnome-control-center*"
-        - "gnome-session*"
-        - "gnome-initial-setup*"
+        - gdm
         - "gnome-classic-session*"
-        - "gnome-tour*"
+        - "gnome-control-center*"
         - "gnome-extensions-app*"
-        - "gnome-system-monitor*"
+        - "gnome-initial-setup*"
         - "gnome-remote-desktop*"
+        - "gnome-session*"
+        - "gnome-shell*"
+        - "gnome-system-monitor*"
+        - "gnome-tour*"
         - "gnome-user-share*"
         - "mutter*"
-        - "papers*"
-        - NetworkManager-ssh-gnome
         - "nano*"
         - "nautilus*"
+        - NetworkManager-ssh-gnome
+        - "papers*"
+        - ptyxis
+        # - steamdeck-gnome-presets
+        - "steamdeck*"
         - "vim*"
         - "xdg-desktop-portal-gnome*"
-        - gdm
-        - ptyxis
-        #- steamdeck-gnome-presets
-        - "steamdeck*"
         - "yelp*"
     install:
       skip-unavailable: false
       install-weak-deps: false
       packages:
-        # Terminal emulator — must come from Fedora, NOT lionheartp/Hyprland COPR
-        - kitty
-        - kitty-shell-integration
-        - kitty-terminfo
-
-        # Wayland / desktop utilities that also exist in COPR — pin to Fedora
-        - qt5ct
         - accountsservice
-        - greetd
-        - xdg-desktop-portal
-        - xdg-user-dirs
-        - xdg-user-dirs-gtk
-        - gsettings-desktop-schemas
-        - gtk4-layer-shell
-        - gnome-keyring
-        - gnome-tweaks
-        - libinput-utils
-
-        # Editors & tools that exist in Terra — pin to Fedora
-        - neovim
-        - mpv
-
-        # Node / npm — exclusively from Fedora (not Nix, not Terra, not Homebrew)
-        - nodejs
-        - npm
-
-        # Build tools & common utilities (all from Fedora)
         - bleachbit
         - bluez
         - bluez-tools
@@ -87,16 +57,29 @@ modules:
         - fonts-filesystem
         - gcc-c++
         - git
+        - gnome-keyring
+        - gnome-tweaks
         - go
+        - greetd
         - grim
+        - gsettings-desktop-schemas
+        - gtk4-layer-shell
         - gzip
         - ImageMagick
         - imv
         - inotify-tools
         - jq
+        - kitty
+        - kitty-shell-integration
+        - kitty-terminfo
+        - libinput-utils
         - logrotate
         - lynis
+        - mpv
+        - neovim
         - ninja-build
+        - nodejs
+        - npm
         - papers
         - papirus-icon-theme
         - pipewire
@@ -108,23 +91,21 @@ modules:
         - pkgconf-pkg-config
         - policycoreutils-python-utils
         - pymol
+        - qt5ct
         - slurp
         - sqlite
         - swappy
         - transmission-gtk
         - udiskie
+        - xdg-desktop-portal
+        - xdg-user-dirs
+        - xdg-user-dirs-gtk
         - xorg-x11-server-Xorg
         - xorg-x11-server-Xwayland
         - zathura
         - zathura-pdf-poppler
         - zathura-plugins-all
 
-
-
-  # Pass 2: COPR + Terra repos.
-  # ONLY packages that REQUIRE these repos are listed here.
-  # Terra is enabled but ONLY zed must be pulled from it.
-  # repos.cleanup: true disables and removes ALL added repos after this pass.
   - type: dnf
     repos:
       cleanup: true
@@ -138,23 +119,16 @@ modules:
       skip-unavailable: false
       install-weak-deps: false
       packages:
-        # From lionheartp/Hyprland COPR
         - cliphist
         - hyprland-git
         - noctalia-git
         - noctalia-greeter-git
         - nwg-look
         - qt6ct
-        - xdg-desktop-portal-hyprland
-
-        # From lilay/topgrade COPR
         - topgrade
-
-        # From sneexy/zen-browser COPR
-        - zen-browser
-
-        # From Terra repo — ONLY this package; no other package must come from Terra
+        - xdg-desktop-portal-hyprland
         - zed
+        - zen-browser
 
   - type: fonts
     fonts:
