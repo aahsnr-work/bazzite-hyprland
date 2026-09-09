@@ -138,13 +138,7 @@ modules:
         - zathura-pdf-poppler
         - zathura-plugins-all
 
-        # NVIDIA userspace extras (from Fedora / RPM Fusion on bazzite base)
-        - nvidia-settings
-        - nvidia-persistenced
-        - egl-wayland
-        - libva-nvidia-driver
-        - libva-utils
-        - vulkan-tools
+
 
   # Pass 2: COPR + Terra repos.
   # ONLY packages that REQUIRE these repos are listed here.
