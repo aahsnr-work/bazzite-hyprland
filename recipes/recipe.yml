@@ -13,6 +13,7 @@ modules:
   - type: dnf
     remove:
       packages:
+        - "bluez*"
         - "cardwire*"
         - gdm
         - "gnome-classic-session*"

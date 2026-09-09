@@ -1,11 +1,5 @@
 # Miscellaneous Questions & Architectural Decisions
 
-- [x] **Is it possible to use Fedora instead of Ubuntu for building the image in GitHub workflow?**
-  - **No**: GitHub-hosted runners do not provide a native Fedora virtual machine environment. GitHub Actions hosted runners only support Ubuntu (`ubuntu-24.04`, `ubuntu-22.04`), macOS, and Windows. A `runs-on: fedora` label does not exist on GitHub-hosted runners.
-  - While GitHub Actions supports containerized steps (`container: image: fedora`), nesting container image builders (Buildah/Podman) inside a container runner requires privileged flags and complex cgroup/storage configurations that are brittle in CI.
-  - The official BlueBuild action (`blue-build/github-action@v1`) is designed specifically to run on `ubuntu-24.04`, utilizing host rootless Podman/Buildah, automatic disk space maximization (`maximize_build_space: true`), and Sigstore Cosign signing.
-  - **Decision**: The build workflow uses `ubuntu-24.04` as recommended by the BlueBuild project.
-
 - [x] **How does chezmoi selective dotfiles work with the BlueBuild chezmoi module?**
 
   The BlueBuild `type: chezmoi` module runs `chezmoi init --apply <repository>` on first user login via a systemd user service (`chezmoi-init.service`). It applies **all** files managed by chezmoi in the repository.
@@ -35,6 +29,7 @@
   ```
 
   Then in `.chezmoiignore`:
+
   ```
   {{ if ne .hostname "my-bazzite-machine" }}
   some-folder/
@@ -42,4 +37,3 @@
   ```
 
   The `.chezmoiignore` approach is the recommended, simplest way to exclude unwanted dotfiles from the `aahsnr-configs/dots` repo when chezmoi runs on the bazzite image.
-
