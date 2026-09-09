@@ -56,8 +56,14 @@ modules:
         - papers-previewer
         - papers-thumbnailer
         - "papers*"
+        - pipewire-jack-audio-connection-kit
+        - pipewire-jack-audio-connection-kit-libs
         - ptyxis
-        # - steamdeck-gnome-presets
+        - rom-properties
+        - rom-properties-common
+        - rom-properties-gtk4
+        - rom-properties-localsearch3
+        - rom-properties-utils
         - "steamdeck*"
         - "vim*"
         - "xdg-desktop-portal-gnome*"
@@ -107,11 +113,6 @@ modules:
         - npm
         - papers
         - papirus-icon-theme
-        - pipewire
-        - pipewire-alsa
-        - pipewire-gstreamer
-        - pipewire-pulseaudio
-        - pipewire-utils
         - pipx
         - pkgconf-pkg-config
         - policycoreutils-python-utils
