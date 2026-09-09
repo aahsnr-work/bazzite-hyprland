@@ -96,6 +96,7 @@ modules:
         - bleachbit
         - bluez-tools
         - brightnessctl
+        - cargo
         - cmake
         - cronie
         - curl
