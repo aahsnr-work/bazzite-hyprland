@@ -20,6 +20,7 @@ modules:
         - evolution-data-server-langpacks
         - evolution-ews-core
         - evolution-ews-langpacks
+        - fish
         - gdm
         - gnome-bluetooth
         - gnome-bluetooth-libs
@@ -41,6 +42,9 @@ modules:
         - gnome-srpm-macros
         - gnome-user-docs
         - gnome-user-share
+        - gstreamer1-plugins-good-qt
+        - gstreamer1-plugins-good-qt6
+        - hunspell-en-AU 
         - "mutter*"
         - "nano*"
         - "nautilus*"
