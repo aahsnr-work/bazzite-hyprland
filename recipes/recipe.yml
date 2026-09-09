@@ -57,10 +57,11 @@ modules:
         - papers-nautilus
         - papers-previewer
         - papers-thumbnailer
-        - "papers*"
+        # pipewire-jack* pkgs cannot be removed
         # - pipewire-jack-audio-connection-kit
         # - pipewire-jack-audio-connection-kit-libs
         - ptyxis
+        - twitter-twemoji-fonts 
         - rom-properties
         - rom-properties-common
         - rom-properties-gtk4
@@ -69,7 +70,14 @@ modules:
         - "steamdeck*"
         - "vim*"
         - "xdg-desktop-portal-gnome*"
-        - "yelp*"
+        - yad
+        - ydotool
+        - yelp
+        - yelp-libs
+        - zenergy
+        - zenergy-akmod-modules
+        - zinnia
+        - zinnia-tomoe-ja
     install:
       skip-unavailable: false
       install-weak-deps: false
