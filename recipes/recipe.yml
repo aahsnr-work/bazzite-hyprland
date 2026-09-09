@@ -17,6 +17,7 @@ modules:
   - type: dnf
     remove:
       packages:
+        - "cardwire*"
         - "gnome-shell*"
         - "gnome-control-center*"
         - "gnome-session*"
@@ -36,7 +37,9 @@ modules:
         - "xdg-desktop-portal-gnome*"
         - gdm
         - ptyxis
-        - steamdeck-gnome-presets
+        #- steamdeck-gnome-presets
+        - "steamdeck*"
+        - "yelp*"
     install:
       skip-unavailable: false
       install-weak-deps: false
