@@ -17,48 +17,22 @@ modules:
   - type: dnf
     remove:
       packages:
-        - "gnome-shell*"
-        - "gnome-control-center*"
-        - "gnome-session*"
-        - "gnome-initial-setup*"
-        - "gnome-classic-session*"
-        - "gnome-tour*"
-        - "gnome-extensions-app*"
-        - "gnome-system-monitor*"
-        - "gnome-remote-desktop*"
-        - "gnome-user-share*"
-        - "gnome-user-docs*"
-        - "gnome-rounded-blur*"
-        - "gnome-search-yafti*"
-        - "mutter*"
-        - "nautilus*"
-        - "papers*"
-        - "yelp*"
-        - "epiphany-runtime"
-        - "google-noto*"
-        - "xdg-desktop-portal-gnome*"
-        - NetworkManager-ssh-gnome
-        - rygel
-        - gdm
-        - ptyxis
-        - "nano*"
-        - "vim-enhanced"
-        - "vim-common"
-        - "vim-data"
-        - "vim-filesystem"
-        - "virtualbox*"
-        - "cockpit*"
-        - "waydroid*"
-        - steamdeck-gnome-presets
-        - steamdeck-backgrounds
-        - jupiter-sd-mounting-btrfs
-        - "cardwire*"
-        - framework-system
-        - "openrazer*"
-        - "kmod-openrazer*"
-        - "ryzen*"
-        - "ryzenadj*"
-        - "kmod-ryzen*"
+          - "gnome-shell*"
+          - "gnome-control-center*"
+          - "gnome-session*"
+          - "gnome-initial-setup*"
+          - "gnome-classic-session*"
+          - "gnome-tour*"
+          - "gnome-extensions-app*"
+          - "gnome-system-monitor*"
+          - "gnome-remote-desktop*"
+          - "gnome-user-share*"
+          - "mutter*"
+          - "nautilus*"
+          - "xdg-desktop-portal-gnome*"
+          - gdm
+          - ptyxis
+          - steamdeck-gnome-presets
     install:
       skip-unavailable: false
       install-weak-deps: false
