@@ -32,6 +32,7 @@ modules:
         - NetworkManager-ssh-gnome
         - "nano*"
         - "nautilus*"
+        - "vim*"
         - "xdg-desktop-portal-gnome*"
         - gdm
         - ptyxis
