@@ -35,7 +35,6 @@ modules:
         - "papers*"
         - "yelp*"
         - "epiphany-runtime"
-        - "evolution*"
         - "google-noto*"
         - "xdg-desktop-portal-gnome*"
         - NetworkManager-ssh-gnome
