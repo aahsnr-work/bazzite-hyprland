@@ -13,19 +13,29 @@ modules:
   - type: dnf
     remove:
       packages:
-        - "bluez*"
+        - bluez-cups
         - "cardwire*"
         - gdm
-        - "gnome-classic-session*"
-        - "gnome-control-center*"
-        - "gnome-extensions-app*"
-        - "gnome-initial-setup*"
-        - "gnome-remote-desktop*"
-        - "gnome-session*"
-        - "gnome-shell*"
-        - "gnome-system-monitor*"
-        - "gnome-tour*"
-        - "gnome-user-share*"
+        - gnome-bluetooth
+        - gnome-bluetooth-libs
+        - gnome-control-center
+        - gnome-control-center-filesystem
+        - gnome-online-accounts
+        - gnome-online-accounts-libs
+        - gnome-remote-desktop
+        - gnome-rounded-blur
+        - gnome-search-yafti
+        - gnome-session
+        - gnome-session-wayland-session
+        - gnome-settings-daemon
+        - gnome-shell
+        - gnome-shell-common
+        - gnome-shell-extension-common
+        - gnome-shell-extension-gsconnect
+        - gnome-shell-extension-user-theme
+        - gnome-srpm-macros
+        - gnome-user-docs
+        - gnome-user-share
         - "mutter*"
         - "nano*"
         - "nautilus*"
@@ -43,7 +53,6 @@ modules:
       packages:
         - accountsservice
         - bleachbit
-        - bluez
         - bluez-tools
         - brightnessctl
         - cmake
