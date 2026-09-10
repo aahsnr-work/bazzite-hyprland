@@ -198,6 +198,10 @@ modules:
         # Add user-level flatpak app IDs here (installed from flathub for current user):
         # - org.mozilla.firefox
 
+  - type: brew
+    brew-analytics: false
+    auto-upgrade: false
+
   - type: fonts
     fonts:
       nerd-fonts:
@@ -217,7 +221,6 @@ modules:
       - install-zotero.sh
       - install-obsidian.sh
       - install-pyprland.sh
-      - install-brew-packages.sh
 
   - type: chezmoi
     repository: "https://github.com/aahsnr-configs/dots"

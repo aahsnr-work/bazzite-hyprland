@@ -18,6 +18,7 @@
     echo "  ujust texlive-install PKG  : Install LaTeX package into ~/texmf (user mode)"
     echo "  ujust texlive-update       : Update all user-installed LaTeX packages"
     echo "  ujust bazzite-cleanup      : Collect Nix garbage and clean Flatpak/system caches"
+    echo "  ujust brew-bundle          : Install/update all Homebrew packages from the Brewfile"
 
 # Comprehensive upgrade recipe replacing Topgrade and maintaining all userspace tools
 system-upgrade:
@@ -138,7 +139,20 @@ system-upgrade:
         ya pkg upgrade || true
     fi
 
-    # 17. Custom ZSH update function
+    # 17. Homebrew packages (via Brewfile)
+    if command -v brew >/dev/null 2>&1; then
+        BREWFILE="${HOME}/.config/Brewfile"
+        [ -f "${BREWFILE}" ] || BREWFILE="/usr/share/ublue-os/Brewfile"
+        if [ -f "${BREWFILE}" ]; then
+            echo "--> [Brew] Updating Homebrew packages from ${BREWFILE}..."
+            brew bundle --file="${BREWFILE}" || true
+        else
+            echo "--> [Brew] No Brewfile found; running brew upgrade..."
+            brew upgrade || true
+        fi
+    fi
+
+    # ZSH update
     if command -v zsh >/dev/null 2>&1; then
         echo "--> [17/17] Running custom zsh-update if defined in shell environment..."
         zsh -i -c 'type zsh-update >/dev/null 2>&1 && zsh-update' || true
@@ -395,3 +409,25 @@ bazzite-cleanup:
     echo "Trimming journald logs..."
     journalctl --vacuum-time=7d || true
     echo "Cleanup complete!"
+
+# Install or update all Homebrew packages declared in the Brewfile
+# Uses ~/.config/Brewfile (personal) if it exists, else /usr/share/ublue-os/Brewfile (system default)
+brew-bundle:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    [ -d /home/linuxbrew/.linuxbrew ] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv 2>/dev/null || true)"
+    if ! command -v brew >/dev/null 2>&1; then
+        echo "Error: brew not found. Ensure brew-setup.service has run (reboot or: sudo systemctl start brew-setup.service)." >&2
+        exit 1
+    fi
+    BREWFILE="${HOME}/.config/Brewfile"
+    if [ ! -f "${BREWFILE}" ]; then
+        BREWFILE="/usr/share/ublue-os/Brewfile"
+    fi
+    if [ ! -f "${BREWFILE}" ]; then
+        echo "No Brewfile found at ~/.config/Brewfile or /usr/share/ublue-os/Brewfile." >&2
+        exit 1
+    fi
+    echo "Installing/updating Homebrew packages from ${BREWFILE}..."
+    brew bundle --file="${BREWFILE}"
+    echo "All Homebrew packages are up to date!"
