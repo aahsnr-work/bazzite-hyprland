@@ -30,7 +30,3 @@ check:
     bash -n files/scripts/*.sh
     @just validate
 
-# Repair corrupted .git/index (index file smaller than expected)
-fix-git:
-    rm -f .git/index && git reset
-

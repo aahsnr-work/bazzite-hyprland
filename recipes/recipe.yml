@@ -165,7 +165,6 @@ modules:
       copr:
         - lionheartp/Hyprland
         - sneexy/zen-browser
-        - lilay/topgrade
       files:
         - https://github.com/terrapkg/subatomic-repos/raw/main/terra.repo
     install:
@@ -178,10 +177,26 @@ modules:
         - noctalia-greeter-git
         - nwg-look
         - qt6ct
-        - topgrade
         - xdg-desktop-portal-hyprland
         - zed
         - zen-browser
+    # Commented section for DNF package groups.
+    # install-weak-deps: false guarantees --setopt=install_weak_deps=False is passed.
+    # group-install:
+    #   with-optional: false
+    #   install-weak-deps: false
+    #   packages:
+    #     - "Development Tools"
+
+  - type: default-flatpaks
+    configurations:
+      - notify: false
+        scope: user
+        repo-url: https://dl.flathub.org/repo/flathub.flatpakrepo
+        repo-name: flathub
+        install: []
+        # Add user-level flatpak app IDs here (installed from flathub for current user):
+        # - org.mozilla.firefox
 
   - type: fonts
     fonts:
@@ -196,10 +211,13 @@ modules:
   - type: script
     scripts:
       - setup-nix-base.sh
+      - clean-upstream-flatpaks.sh
       - install-vscode.sh
       - install-brave.sh
       - install-zotero.sh
       - install-obsidian.sh
+      - install-pyprland.sh
+      - install-brew-packages.sh
 
   - type: chezmoi
     repository: "https://github.com/aahsnr-configs/dots"
@@ -216,3 +234,4 @@ modules:
     user:
       enabled:
         - home-manager-init.service
+        - pyprland.service

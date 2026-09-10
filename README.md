@@ -275,10 +275,13 @@ sequenceDiagram
 | Layer | Tool | Scope | Examples |
 |---|---|---|---|
 | **System (immutable)** | DNF via BlueBuild | Fedora repos, COPR, Terra, custom repos | `kitty`, `neovim`, `greetd`, `hyprland-git`, `nodejs`, `pipewire` |
-| **User environment** | Home-Manager (Nix) | `~/.nix-profile/` — persists across reboots | `btop`, `yazi`, `zsh`, `starship`, `lazygit`, `atuin` |
-| **Runtime manual** | Flatpak (existing) | `/var/lib/flatpak/` — user-controlled | GUI apps from Flathub |
+| **Standalone Baked Tools** | Script modules | Extracted into `/usr/lib/` or `/usr/bin/` | Obsidian, VSCode, Brave, Zotero, TeX Live (medium), Pyprland (3.4.x) |
+| **Pre-baked Homebrew** | Linuxbrew in BlueBuild | Baked in `/usr/share/homebrew/`, deployed on boot | `atuin`, `bat`, `btop`, `bun`, `cava`, `chafa`, `direnv`, `dust`, `eza`, `fd`, `fzf`, `git`, `gh`, `git-lfs`, `gnuplot`, `lazygit`, `pandoc`, `pixi`, `ripgrep`, `starship`, `tealdeer`, `uv`, `yazi`, `zellij` |
+| **User Applications** | Flatpak (`scope: user`) | `~/.local/share/flatpak/` from Flathub | User-specified Flatpak apps (Fedora repo purged, upstream flatpaks suppressed) |
+| **User environment** | Home-Manager (Nix) | `~/.nix-profile/` — persists across reboots | User-managed Nix flake configurations |
+| **Dotfiles** | Chezmoi | `~/.local/share/chezmoi` synced with SSH | `~/.config/` dotfiles from `aahsnr-configs/dots` |
 
-**Topgrade configuration:** The deployed `/etc/topgrade.toml` disables `[manager.dnf]`, `[manager.rpm_ostree]`, and `[manager.system]` while enabling `home_manager = true`, `flatpak = true`, and `cleanup = true`. This prevents Topgrade from attempting to modify the read-only root filesystem.
+**Upgrade & Maintenance:** Topgrade has been superseded by native [`ujust system-upgrade`](files/system/usr/share/ublue-os/just/60-custom.just), which orchestrates upgrades for all 17 system and userspace tools (Distrobox, fwupd firmware, Flatpak user apps, mandb, Nix, Home-Manager, hyprpm, Cargo, Doom Emacs, VSCode extensions, TLDR, Pixi, Podman containers, uv, Bun, Yazi packages, and custom `zsh-update`).
 
 ---
 
@@ -306,7 +309,8 @@ export PAGER="bat --paging=always --style=plain"
 
 **PATH additions (in ascending priority):**
 ```
-~/.npm-global/bin → ~/.config/emacs/bin → ~/.local/bin → ~/.cache/.bun/bin
+/home/linuxbrew/.linuxbrew/sbin → /home/linuxbrew/.linuxbrew/bin
+→ ~/.npm-global/bin → ~/.config/emacs/bin → ~/.local/bin → ~/.cache/.bun/bin
 → ~/.bun/bin → ~/go/bin → ~/.cargo/bin → ~/bin
 → /nix/var/nix/profiles/default/bin → ~/.nix-profile/bin  (highest priority)
 ```
@@ -319,15 +323,20 @@ Bazzite ships `ujust` as a native CLI task runner. This image extends it with [`
 
 | Command | Purpose |
 |---|---|
+| `ujust system-upgrade` | Comprehensive maintenance & upgrade across all 17 userspace package ecosystems (replaces Topgrade) |
+| `ujust rebase-to-custom [tag]` | Rebase current system to the custom `bazzite-hyprland` container image (default: `latest`) |
+| `ujust setup-doom` | Non-interactively clone, configure, and install personal Doom Emacs environment |
 | `ujust setup-nix` | Verify or manually re-run the Determinate Nix installer |
 | `ujust update-nix` | Update Nix flake registries and user channels |
 | `ujust switch-home-manager` | Re-evaluate and apply `~/.config/home-manager/` |
 | `ujust sync-dotfiles` | Pull and apply latest Chezmoi dotfiles immediately |
+| `ujust dots-ssh` | Switch Chezmoi source git repository remote from HTTPS to SSH |
+| `ujust dots-push [msg]` | Commit and push Chezmoi dotfile changes to GitHub over SSH |
+| `ujust dots-status` | Check Chezmoi sync and Git working tree status |
 | `ujust update-hyprpm` | Rebuild and reload Hyprland plugins via `hyprpm` |
 | `ujust texlive-install <pkg>` | Install a LaTeX package into `~/texmf` (user mode) |
 | `ujust texlive-update` | Update all user-installed TeX Live packages |
-| `ujust fix-git-index` | Repair a corrupted `.git/index` file |
-| `ujust bazzite-cleanup` | Nix garbage collection + Flatpak cleanup + journal trim |
+| `ujust bazzite-cleanup` | Nix garbage collection + Flatpak unused runtimes + journal trim |
 
 ---
 

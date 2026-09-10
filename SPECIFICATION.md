@@ -200,14 +200,19 @@ The image deploys `/usr/share/ublue-os/just/60-custom.just`, providing convenien
 
 | Command | Purpose |
 |---------|---------|
+| `ujust system-upgrade` | Comprehensive maintenance & upgrade across all 17 userspace ecosystems (replaces Topgrade). |
+| `ujust rebase-to-custom [tag]` | Rebase current system to the custom `bazzite-hyprland` container image (default: `latest`). |
+| `ujust setup-doom` | Non-interactively clone, configure, and install personal Doom Emacs environment. |
 | `ujust setup-nix` | Verifies or manually triggers the Determinate Nix installer (`determinate-nix-init.service`). |
 | `ujust update-nix` | Updates Nix flake registries and user channels. |
 | `ujust switch-home-manager` | Re-evaluates and switches Home-Manager configuration from `~/.config/home-manager/`. |
 | `ujust sync-dotfiles` | Pulls and applies latest dotfiles via Chezmoi immediately. |
+| `ujust dots-ssh` | Switches Chezmoi source git repository remote from HTTPS to SSH. |
+| `ujust dots-push [msg]` | Commits and pushes Chezmoi dotfile updates to GitHub over SSH. |
+| `ujust dots-status` | Displays Chezmoi synchronization and working tree status. |
 | `ujust update-hyprpm` | Rebuilds and reloads Hyprland plugins in userspace. |
 | `ujust texlive-install <pkg>` | Installs a LaTeX package into `~/texmf` using TeX Live user mode. |
 | `ujust texlive-update` | Updates all user-installed TeX Live packages in `~/texmf`. |
-| `ujust fix-git-index` | Instantly repairs corrupted/0-byte `.git/index` (`rm -f .git/index && git reset`). |
 | `ujust bazzite-cleanup` | Runs `nix-collect-garbage -d`, uninstalls unused Flatpaks, and cleans system logs. |
 
 ---
@@ -219,8 +224,6 @@ The image deploys `/usr/share/ublue-os/just/60-custom.just`, providing convenien
 * **Fix**:
   ```bash
   rm -f .git/index && git reset
-  # Or run via ujust:
-  ujust fix-git-index
   ```
 * **Prevention**: Set `"git.autorefresh": false` and `"git.fsWatch": false` in VS Code / IDE settings.
 
@@ -247,5 +250,5 @@ Run these commands inside your local repository for development:
 * `just check`: Runs bash syntax checks across all scripts and validates the recipe.
 * `just dry-run`: Generates compiled Containerfile without building image.
 * `just build`: Builds the container image locally.
-* `just fix-git`: Repairs local `.git/index`.
+* `just switch`: Switches this machine to the locally-built image via `bootc`.
 
