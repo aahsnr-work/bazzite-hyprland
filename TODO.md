@@ -74,7 +74,7 @@
 - [x] **Dotfiles setup should be done before determinate-nix and home-manager setup. The dotfiles will point to a home-manager folder in `~/.config/`.**
   - _Implemented: Enforced service ordering via `home-manager-init.service` with `After=chezmoi-init.service`. Chezmoi applies dotfiles to `~/.config/home-manager/` first, and then Home-Manager applies the user package configuration._
 
-- [ ] Install the following packages using homebrew and the packages must be baked into the image itself
+- [ ] Install the following packages using homebrew and the packages must be baked into the image itself. The following brew packages must be installed when the image is built in github workflow.
   1. atuin
   2. bat
   3. btop
