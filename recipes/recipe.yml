@@ -155,6 +155,7 @@ modules:
         - zathura
         - zathura-pdf-poppler
         - zathura-plugins-all
+        - zsh
 
   - type: dnf
     repos:

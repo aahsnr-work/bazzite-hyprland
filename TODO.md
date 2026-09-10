@@ -82,7 +82,7 @@
 - [x] **Dotfiles setup should be done before determinate-nix and home-manager setup. The dotfiles will point to a home-manager folder in `~/.config/`.**
   - _Implemented: Enforced service ordering via `home-manager-init.service` with `After=chezmoi-init.service`. Chezmoi applies dotfiles to `~/.config/home-manager/` first, and then Home-Manager applies the user package configuration._
 
-- [x] **Home-manager will manage the installation and config of the following packages:**
+- [ ] Install the following packages using homebrew and the packages must be baked into the image itself
   1. atuin
   2. bat
   3. btop
@@ -100,14 +100,10 @@
   15. lazygit
   16. pandoc
   17. ripgrep
-  18. starship,
+  18. starship
   19. tealdeer
-  20. tmux
-  21. yazi
-  22. zellij
-  23. zsh.
-      _[NOTE:] Both direnv installed by fedora and installed by home-manager are needed._
-  - _Implemented: Managed through the dotfiles Home-Manager configuration. Fedora host direnv is installed via `type: dnf`._
+  20. yazi
+  21. zellij
 
 - [x] **Determine if the current method of manually installing texlive distribution in build_files/build.sh is correct. You can ignore the fact that the texlive-full scheme makes the image extremely large.**
   - _Resolved & Fixed: The previous method installed to `/usr/local/texlive`. In Fedora Atomic / OSTree, `/usr/local` is a symlink to `/var/usrlocal`, which is NOT part of the read-only image and does NOT update across image rebases! The installer script has been updated to install to `/usr/lib/texlive` with `/etc/profile.d/texlive.sh`._
