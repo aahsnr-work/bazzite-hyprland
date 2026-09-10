@@ -105,6 +105,7 @@ modules:
         - ddcutil
         - direnv
         - distrobox
+        - emacs-pgtk
         - fail2ban
         - file-roller
         - fontconfig
@@ -129,6 +130,7 @@ modules:
         - libinput-utils
         - logrotate
         - lynis
+        - man-db
         - mpv
         - neovim
         - ninja-build

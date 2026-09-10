@@ -10,15 +10,6 @@
 - [x] **You cannot add hyprland-devel when install hyprland-git from the hyprland fedora copr repo. And you must install cliphist, qt6ct from the hyprland copr repo as well.**
   - _Implemented: Removed `hyprland-devel` from `recipes/recipe.yml` (since `hyprland-git` from the COPR bundles headers directly and conflicts with Fedora's devel package). Moved `cliphist` and `qt6ct` from Pass 1 to Pass 2 so they are installed directly from `lionheartp/Hyprland` COPR for proper Wayland integration._
 
-- [x] **The bazzite-pkgs.txt file in the root folder of bazzite-hyprland project contains the list of packages installed by the bazzite-gnome-nvdia image. Analyze this file and determine which packages can be removed from custom image and state the reasons behind why these packages are safe to remove.**
-  - _Implemented & Documented: Conducted an in-depth audit of all 1,513 active packages in `bazzite-pkgs.txt`. Expanded `remove.packages` in `recipes/recipe.yml` across focused categories:_
-    1. _**GNOME Desktop & Shell Environment**: `gnome-shell*`, `mutter*`, `gnome-control-center*`, `gnome-session*`, `gdm`, `gnome-remote-desktop*`, `gnome-user-share*`, `gnome-user-docs*`, `gnome-rounded-blur*`, `gnome-search-yafti*`, `NetworkManager-ssh-gnome`, `rygel`, `yelp*`, `gnome-tour*`, `gnome-system-monitor*`. (Note: Broad `gnome*` wildcard is deliberately avoided because it would strip `gnome-keyring`—which is essential for PAM auto-unlock and Git credential storage—as well as `gnome-tweaks` and shared GTK libraries)._
-    2. _**Evolution & Epiphany Runtimes**: `evolution*` (Evolution Data Server and EWS daemons run background calendar/contact factories; inactive dead weight without GNOME Calendar/Contacts), `epiphany-runtime` (WebKitGTK GNOME Web runtime; redundant with Brave and Zen Browser installed)._
-    3. _**Redundant Editors & Viewers**: `nano*` (removed; default editor is Neovim), `vim-enhanced`, `vim-common`, `vim-data`, `vim-filesystem` (all full Vim editor files removed; `vim-minimal` is strictly preserved because Fedora's `sudo`/`visudo` has a hard requirement on `/bin/vi`), `ptyxis` (replaced by Kitty), `nautilus*` (replaced by Yazi/CLI), `papers*` (all old base image packages stripped in remove step, and clean standalone `papers` reinstalled without Nautilus extensions)._
-    4. _**Virtualization & Web Consoles**: `virtualbox*` (`virtualbox-guest-additions` removed), `cockpit*` (all Cockpit server administration modules removed), `waydroid*` (Waydroid container and SELinux packages removed)._
-    5. _**Handheld, Laptop & Mobile Hardware Drivers (Desktop Image)**: `cardwire*` (removed; eBPF dGPU power management is for hybrid laptops), `framework-system` (Framework laptop specific utilities), `openrazer*` / `kmod-openrazer*` (Razer peripheral kernel modules), `ryzen*` / `ryzenadj*` / `kmod-ryzen*` (Ryzen SMU mobile power management and undervolting tools unneeded on desktop), `steamdeck-gnome-presets`, `steamdeck-backgrounds`, `jupiter-sd-mounting-btrfs`._
-    - _**Preserved Core Components (Safety Guardrails)**: Valve-patched Mesa and Vulkan tools (`terra-release-mesa`, `vulkan-tools`, `libva-*`), NVIDIA proprietary userspace and open kernel modules (`nvidia-driver*`, `nvidia-settings`, `egl-wayland`), audio infrastructure (`pipewire`, `wireplumber`), gaming runtimes (`steam`, `gamescope`, `mangohud`, `vkBasalt`), and `sudo` with `vim-minimal` are strictly preserved._
-
 - [x] **Also look at all the files of the git repos listed in Suggestions.md file.**
   - _Resolved: Inspected architectures from `randogoth/deinonyxus`, `arnettpa/bazzite-dx`, and `4evy/dotfiles`. Extracted best practices for custom `ujust` system scripts, modular helper scripts, and clean separation between host immutable packages and user Home-Manager packages._
 
@@ -78,6 +69,7 @@
     - _Implemented: Detailed guide added to `README.md` explaining how to configure `.chezmoiignore` at the root of `aahsnr-configs/dots` to selectively include only desired folders (like `hypr`, `kitty`, `waybar`) while ignoring unneeded files._
   - [x] **Is there a better more declarative method to setting up dotfiles other than chezmoi and home-manager that is baked into the custom image itself. In other words, I want the dotfiles to be setup when the custom image itself is being built.**
     - _Resolved: If you want dotfiles baked strictly at build time without network calls on boot, the standard pattern on OSTree is: (1) In a build script, clone or copy the configs to a system directory like `/usr/share/dotfiles/` or system-wide XDG paths `/etc/xdg/` (which applications read as fallbacks); (2) Add a simple systemd user service (`rsync -a --ignore-existing /usr/share/dotfiles/ $HOME/`). However, Chezmoi is preferred by BlueBuild because it decouples dotfile updates from 10GB container image rebuilds and provides templating and conflict management._
+  - [ ] I mainly use ssh to manage my git repositories with custom ssh keys and gpg keys setup into my github account. This includes the aahsnr-configs/dots repository as well. How would chezmoi manage cloning my repository in this case. In the end I will also need a ujust script to push and manage this repository as well.
 
 - [x] **Dotfiles setup should be done before determinate-nix and home-manager setup. The dotfiles will point to a home-manager folder in `~/.config/`.**
   - _Implemented: Enforced service ordering via `home-manager-init.service` with `After=chezmoi-init.service`. Chezmoi applies dotfiles to `~/.config/home-manager/` first, and then Home-Manager applies the user package configuration._
@@ -86,26 +78,77 @@
   1. atuin
   2. bat
   3. btop
-  4. cava
-  5. chafa
-  6. direnv
-  7. dust
-  8. eza
-  9. fd
-  10. fzf
-  11. git
-  12. gh
-  13. git-lfs
-  14. gnuplot
-  15. lazygit
-  16. pandoc
-  17. ripgrep
-  18. starship
-  19. tealdeer
-  20. yazi
-  21. zellij
+  4. bun
+  5. cava
+  6. chafa
+  7. direnv
+  8. dust
+  9. eza
+  10. fd
+  11. fzf
+  12. git
+  13. gh
+  14. git-lfs
+  15. gnuplot
+  16. lazygit
+  17. pandoc
+  18. pixi
+  19. ripgrep
+  20. starship
+  21. tealdeer
+  22. uv
+  23. yazi
+  24. zellij
 
-- [ ] Write a bash script baked into the image setup
+- [ ] Write a bash script baked into the image that sets up and installs pyprland from github releases from https://github.com/hyprland-community/pyprland . Installation of pyprland must be done the same way as the other packages installed using script. In other words, the installation must be done when the custom image is being built. Also make sure that systemd user service can be setup as shown in https://hyprland-community.github.io/pyprland/Getting-started.html instead of exec-once in hyprland configs. The installation done during image building must be able to update pyprland whenever a newer release is available.
+
+- [ ] ujust fix-git-index is no longer needed
+
+- [ ] I need a separate ujust recipe to rebase my system to my new custom image whenever it becomes availabe. add
+
+- [ ] In recipe.yml of the bazzite-hyprland project, add a separate flatpak section where I can add flatpak apps that I want installed and baked into my custom image. In other words, I don't want to install flatpak apps after I rebase and login into my custom image. I need them available after rebase is complete. However, keep in mind that I want to remove the fedora repo for flatpaks completely. I also don't want to install flatpaks system-wide. I only want to install flatpaks for the current user using the official flathub repo. Perform the necessary tasks accordingly. The bazaar package from the bazzite image is still kept as a backup in case I need to install a flatpak manually using the store. Furthermore, other than the flatpaks mentioned in this recipe.yml, the custom image must not contain any other flatpaks that may be shipped with the upstream bazzite image that the bazzite-hyprland project uses.
+
+- [ ] In recipy.yml add a commented section to add dnf groups that I might add later on. Keep in mind that --setopt=install_weak_deps=False must also be used whenever dnf groups are installed. Furthermore, make sure that the method to use --setopt=install_weak_deps=False in the dnf module is the correct way by search bluebuild project as well as searching the web.
+
+- [ ] I need a separate ujust recipe to perform the following upgrades that topgrage would normally do so that I would no longer need topgrade. This ujust recipe would also maintain and update other things for my system that include but are not limited too:
+  1.  doom upgrade that topgrade handles
+  2.  update zsh plugins by utilizing the custom zsh-update function from my zsh config
+  3.  everything topgrade normally updates as well, unless these commands from topgrade are incompatible with the immutable approach of OCIs. I have a topgrade.toml already available in files/system/etc/topgrade.toml of the bazzite-hyprland project. I use topgrade in my Arch Linux system and it performs the following tasks. For these following tasks (the ones that are applicable only), search the web, think for longer and determine how topgrade approaches these applicable tasks and act accordingly.
+  - Self update: not applicable since this is image based and topgrade gets upgraded when image is rebuild.
+  - System update: not applicable as well for the same reason the system is image-based
+  - Distrobox: applicable since distrobox is baked into the image
+  - Firmware upgrades: determine how bazzite and other oci based fedora distributions handle firmware upgrades. It may not be applicable if firmware upgrades are done in the upstream source but I don't know enough to answer whether firmware upgrades can be done like non-immutable distributions.
+  - Flatpak User Packages: applicable
+  - Flatpak System Packages: not applicable as described above
+  - System Manuals: not sure how it is applicable but man-db package is installed in the custom image using dnf
+  - User Manuals: not sure how it is applicable but man-db package is installed in the custom image using dnf
+  - pkgfile: likely not applicable, you need to confirm
+  - Nix (self-upgrade) using the latest version of Determinate Nix: applicable
+  - home-manager: applicable
+  - hyprpm: applicable
+  - Cargo: applicable
+  - Doom Emacs: applicable
+  - Visual Studio Code extensions: applicable
+  - TLDR: applicable
+  - Pixi: not sure if applicable since you need to determine if pixi is useful or needed in immutable distros
+  - Containers: applicable
+  - uv: applicable
+  - Bun: applicable
+  - Yazi packages: applicable
+
+  The above list for items that topgrade handles comes from the titles topgrade uses for these tasks. You need to determine the internal commands topgrade uses yourself.
+
+- [ ] I want to be able to setup my doom emacs configuration after I have logged into my custom image after rebasing into it. The main commands that would normally be used with doom emacs is as follows:
+
+```sh
+git clone git@github.com:aahsnr-configs/doom.git ~/.config/doom
+echo "(doom! :config literate)" > ~/.config/doom/init.el
+git clone --depth 1 https://github.com/doomemacs/core ~/.config/emacs
+~/.config/emacs/bin/doom install
+~/.config/emacs/bin/doom sync --gc
+```
+
+Search the web, think for longer and determine the best approach to achieve this.
 
 - [x] **Determine if the current method of manually installing texlive distribution in build_files/build.sh is correct. You can ignore the fact that the texlive-full scheme makes the image extremely large.**
   - _Resolved & Fixed: The previous method installed to `/usr/local/texlive`. In Fedora Atomic / OSTree, `/usr/local` is a symlink to `/var/usrlocal`, which is NOT part of the read-only image and does NOT update across image rebases! The installer script has been updated to install to `/usr/lib/texlive` with `/etc/profile.d/texlive.sh`._
