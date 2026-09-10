@@ -105,6 +105,8 @@
   20. yazi
   21. zellij
 
+- [ ] Write a bash script baked into the image setup
+
 - [x] **Determine if the current method of manually installing texlive distribution in build_files/build.sh is correct. You can ignore the fact that the texlive-full scheme makes the image extremely large.**
   - _Resolved & Fixed: The previous method installed to `/usr/local/texlive`. In Fedora Atomic / OSTree, `/usr/local` is a symlink to `/var/usrlocal`, which is NOT part of the read-only image and does NOT update across image rebases! The installer script has been updated to install to `/usr/lib/texlive` with `/etc/profile.d/texlive.sh`._
 
