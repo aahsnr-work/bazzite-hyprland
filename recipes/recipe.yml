@@ -223,7 +223,7 @@ modules:
       - install-zotero.sh
       - install-obsidian.sh
       - install-pyprland.sh
-      # - install-texlive.sh
+      - install-texlive.sh
 
   - type: chezmoi
     repository: "https://github.com/aahsnr-configs/dots"
