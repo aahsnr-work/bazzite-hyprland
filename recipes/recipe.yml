@@ -129,6 +129,7 @@ modules:
         - kitty-terminfo
         - libinput-utils
         - logrotate
+        - ly
         - lynis
         - man-db
         - mpv
@@ -174,7 +175,6 @@ modules:
         - cliphist
         - hyprland-git
         - noctalia-git
-        - noctalia-greeter-git
         - nwg-look
         - qt6ct
         - xdg-desktop-portal-hyprland
@@ -233,7 +233,7 @@ modules:
   - type: systemd
     system:
       enabled:
-        - greetd.service
+        - ly.service
         - accounts-daemon.service
         - determinate-nix-init.service
     user:
