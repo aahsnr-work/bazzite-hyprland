@@ -115,7 +115,6 @@ modules:
         - gnome-keyring
         - gnome-tweaks
         - go
-        - greetd
         - grim
         - gsettings-desktop-schemas
         - gtk4-layer-shell
@@ -153,6 +152,7 @@ modules:
         - xdg-desktop-portal
         - xdg-user-dirs
         - xdg-user-dirs-gtk
+        - xhost
         - xorg-x11-server-Xorg
         - xorg-x11-server-Xwayland
         - xorg-x11-xauth
@@ -216,7 +216,7 @@ modules:
   - type: script
     scripts:
       - setup-nix-base.sh
-      - clean-upstream-flatpaks.sh
+      # - clean-upstream-flatpaks.sh
       - clean-gnome-extensions.sh
       - install-vscode.sh
       - install-brave.sh
