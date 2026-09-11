@@ -191,13 +191,44 @@ modules:
 
   - type: default-flatpaks
     configurations:
-      - notify: false
-        scope: user
-        repo-url: https://dl.flathub.org/repo/flathub.flatpakrepo
-        repo-name: flathub
-        install: []
-        # Add user-level flatpak app IDs here (installed from flathub for current user):
-        # - org.mozilla.firefox
+      - notify: true # Send notification after install/uninstall is finished (true/false)
+        scope: system
+        remove: # system flatpaks we want all users to have and not remove
+          - com.github.Matoking.protontricks
+          - com.github.tchx84.Flatseal
+          - com.mattjakeman.ExtensionManager
+          - com.obsproject.Studio.Plugin.GStreamerVaapi
+          - com.obsproject.Studio.Plugin.Gstreamer
+          - com.obsproject.Studio.Plugin.OBSVkCapture
+          - com.ranfdev.DistroShelf
+          - com.vysp3r.ProtonPlus
+          - io.github.flattool.Warehouse
+          - io.missioncenter.MissionCenter
+          - org.freedesktop.Platform
+          - org.freedesktop.Platform.Compat.i386
+          - org.freedesktop.Platform.GL.default
+          - org.freedesktop.Platform.GL32.default
+          - org.freedesktop.Platform.VulkanLayer.MangoHud
+          - org.freedesktop.Platform.VulkanLayer.OBSVkCapture
+          - org.freedesktop.Platform.VulkanLayer.vkBasalt
+          - org.freedesktop.Platform.codecs-extra
+          - org.gnome.Calculator
+          - org.gnome.Calendar
+          - org.gnome.Characters
+          - org.gnome.Contacts
+          - org.gnome.Firmware
+          - org.gnome.Logs
+          - org.gnome.NautilusPreviewer
+          - org.gnome.Papers
+          - org.gnome.Platform
+          - org.gnome.Showtime
+          - org.gnome.TextEditor
+          - org.gnome.Weather
+          - org.gnome.baobab
+          - org.gnome.clocks
+          - org.gnome.font-viewer
+          - page.tesk.Refine
+      - scope: user
 
   - type: brew
     brew-analytics: false
