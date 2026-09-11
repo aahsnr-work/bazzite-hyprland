@@ -265,11 +265,11 @@ modules:
   - type: systemd
     system:
       enabled:
-        - ly@tty1.service
+        # - ly@tty1.service
         - accounts-daemon.service
         - determinate-nix-init.service
-      masked:
-        - getty@tty1.service
+      # masked:
+      #   - getty@tty1.service
     user:
       enabled:
         - home-manager-init.service
