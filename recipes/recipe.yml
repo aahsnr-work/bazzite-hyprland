@@ -216,6 +216,7 @@ modules:
     scripts:
       - setup-nix-base.sh
       - clean-upstream-flatpaks.sh
+      - clean-gnome-extensions.sh
       - install-vscode.sh
       - install-brave.sh
       - install-zotero.sh

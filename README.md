@@ -86,6 +86,7 @@ All core requirements, architectural decisions, and tasks are implemented and va
 | 22 | **Package Manifest Audit & Bloat Removal** | Audited all 1,513 packages in `bazzite-pkgs.txt`. Safely stripped GNOME desktop/session, Evolution Data Server, Epiphany runtime, Nano, full Vim, legacy Papers, VirtualBox guest additions, Cockpit, Waydroid, Cardwire, Framework laptop tools, OpenRazer, and Ryzen mobile power utilities, while preserving NVIDIA, Mesa, PipeWire, Steam, and `sudo`'s `/bin/vi` dependency. | Completed |
 | 23 | **Pre-baked Homebrew & Brewfile** | Integrated official BlueBuild `brew` module with `brew-analytics: false` and `auto-upgrade: false`. Deployed system default Brewfile to `/usr/share/ublue-os/Brewfile` and provided `ujust brew-bundle`. | Completed |
 | 24 | **Pyprland Daemon & Integration** | Installed Pyprland 3.4.x via pipx into `/usr/lib/pyprland` with `/usr/bin/pyprland` symlink. Configured systemd user service `pyprland.service` enabled at build time. | Completed |
+| 25 | **Reversal of `build-gnome-extensions`** | Safely reversed upstream Bazzite's `build-gnome-extensions` via [`clean-gnome-extensions.sh`](files/scripts/clean-gnome-extensions.sh). Purged 12 unneeded extension directories, removed schema overrides, re-compiled GLib schemas, and updated the dconf database. | Completed |
 
 ---
 
@@ -100,6 +101,7 @@ All core requirements, architectural decisions, and tasks are implemented and va
 │   └── recipe.yml                  # Declarative BlueBuild module pipeline
 ├── files/
 │   ├── scripts/                    # Modular build-time shell scripts
+│   │   ├── clean-gnome-extensions.sh # Reverses Bazzite build-gnome-extensions & cleans schemas
 │   │   ├── clean-upstream-flatpaks.sh # Purges Fedora flatpak repo and pre-installed flatpaks
 │   │   ├── install-brave.sh        # Brave Browser & Brave Origin
 │   │   ├── install-obsidian.sh     # Obsidian AppImage → /usr/lib/obsidian
@@ -227,6 +229,7 @@ Build-time shell scripts in `files/scripts/` execute sequentially:
 |---|---|
 | `setup-nix-base.sh` | Creates the empty `/nix` directory mountpoint in the read-only root |
 | `clean-upstream-flatpaks.sh` | Purges the Fedora flatpak repository and unneeded upstream flatpak runtimes |
+| `clean-gnome-extensions.sh` | Safely reverses Bazzite's `build-gnome-extensions`: removes 12 extension directories, purges schema overrides, and recompiles GLib schemas |
 | `install-vscode.sh` | Imports Microsoft GPG key, writes `vscode.repo` with `enabled=0`, installs `code` via `--enablerepo=code` |
 | `install-brave.sh` | Adds Brave repo + GPG key, installs `brave-browser` and `brave-origin`, removes the repo file |
 | `install-texlive.sh` | Downloads CTAN installer; runs non-interactive TeX Live (`scheme-medium`) install to `/usr/lib/texlive`; runs `tlmgr install` for `EXTRA_TL_PACKAGES` |
