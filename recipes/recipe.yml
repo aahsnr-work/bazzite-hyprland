@@ -155,6 +155,7 @@ modules:
         - xdg-user-dirs-gtk
         - xorg-x11-server-Xorg
         - xorg-x11-server-Xwayland
+        - xorg-x11-xauth
         - zathura
         - zathura-pdf-poppler
         - zathura-plugins-all
@@ -233,9 +234,11 @@ modules:
   - type: systemd
     system:
       enabled:
-        - ly.service
+        - ly@tty1.service
         - accounts-daemon.service
         - determinate-nix-init.service
+      masked:
+        - getty@tty1.service
     user:
       enabled:
         - home-manager-init.service
