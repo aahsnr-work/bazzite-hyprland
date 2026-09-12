@@ -230,9 +230,9 @@ modules:
           - page.tesk.Refine
       - scope: user
 
-  - type: brew
-    brew-analytics: false
-    auto-upgrade: false
+  # - type: brew
+  #   brew-analytics: false
+  #   auto-upgrade: false
 
   - type: fonts
     fonts:
@@ -260,7 +260,6 @@ modules:
     repository: "https://github.com/aahsnr-configs/dots"
     file-conflict-policy: replace
     all-users: true
-    run-every: 1d
 
   - type: systemd
     system:
@@ -272,5 +271,7 @@ modules:
       #   - getty@tty1.service
     user:
       enabled:
+        - chezmoi-init.service
+        - chezmoi-update.timer
         - home-manager-init.service
         - pyprland.service
